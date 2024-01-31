@@ -1,0 +1,16 @@
+from django.contrib import admin
+from .models import *
+# Register your models here.
+
+admin.site.register(NetworkDevice)
+admin.site.register(Interface)
+admin.site.register(TrafficData)
+admin.site.register(ErrorLog)
+admin.site.register(UserActivity)
+admin.site.register(BandwidthUsage)
+admin.site.register(DeviceConfiguration)
+admin.site.register(AuthenticationLog)
+admin.site.register(PerformanceMetrics)
+admin.site.register(NetworkEvents)
+admin.site.register(IPAddress)
+admin.site.register(Configuration)
