@@ -226,7 +226,7 @@ class IPAddress(models.Model):
     def __str__(self):
         return self.ip_address
 
-# IPAddress
+# Configuration
 # ├── id: Integer (PK)
 # ├── device: ForeignKey(NetworkDevice)
 # ├── configuration_text: TextField
@@ -284,3 +284,4 @@ class Configuration(models.Model):
 # ### Инструменты для построения графиков
 # Для построения графиков можно использовать различные инструменты и библиотеки, такие как Matplotlib и Seaborn в Python, или интегрированные решения для веб-приложений, например, D3.js или Chart.js. 
 # Выбор инструмента зависит от требований к визуализации и платформы, на которой реализовано приложение.
+
