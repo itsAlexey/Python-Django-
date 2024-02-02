@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from TestDB.views import NetworkDeviceListView
 
 from rest_framework.routers import DefaultRouter, SimpleRouter
 
@@ -27,6 +28,7 @@ router.register('api/networkdevices', NetworkDeviceView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('network-devices/', NetworkDeviceListView.as_view(), name='network-device-list'),
 ]
 
 urlpatterns += router.urls
