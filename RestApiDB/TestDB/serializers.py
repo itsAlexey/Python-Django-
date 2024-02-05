@@ -3,24 +3,21 @@ from rest_framework.serializers import ModelSerializer
 from .models import NetworkDevice, Interface, TrafficData, ErrorLog, UserActivity, BandwidthUsage, DeviceConfiguration
 from .models import AuthenticationLog, PerformanceMetrics, NetworkEvents, IPAddress, Configuration
 
-class ErrorLogSerializer(ModelSerializer):
-    class Meta:
-        model = ErrorLog
-        fields = '__all__'
+from .models import RoomCount, Apartment, Person
 
 class UserActivitySerializer(ModelSerializer):
     class Meta:
         model = UserActivity
         fields = '__all__'
 
-class BandwidthUsageSerializer(ModelSerializer):
-    class Meta:
-        model = BandwidthUsage
-        fields = '__all__'
-
 class DeviceConfigurationSerializer(ModelSerializer):
     class Meta:
         model = DeviceConfiguration
+        fields = '__all__'
+
+class BandwidthUsageSerializer(ModelSerializer):
+    class Meta:
+        model = BandwidthUsage
         fields = '__all__'
 
 class AuthenticationLogSerializer(ModelSerializer):
@@ -53,20 +50,23 @@ class ConfigurationSerializer(ModelSerializer):
         model = Configuration
         fields = '__all__'
 
-class InterfaceSerializer(ModelSerializer):
-    traffic_data = TrafficDataSerializer(many=True, read_only=True)
-    bandwidth_usage = BandwidthUsageSerializer(many=True, read_only=True)
+class ErrorLogSerializer(ModelSerializer):
+    class Meta:
+        model = ErrorLog
+        fields = '__all__'
 
+class InterfaceSerializer(ModelSerializer):
+    traffic_data = TrafficDataSerializer(many=True, read_only=True, source='trafficdata_set')
+    bandwidth_usage = BandwidthUsageSerializer(many=True, read_only=True, source='bandwidthusage_set')
     class Meta:
         model = Interface
-        fields = ['id', 'name', 'status', 'traffic_data', 'bandwidth_usage']
+        fields = '__all__'
 
 class NetworkDeviceSerializer(ModelSerializer):
     interfaces = InterfaceSerializer(many=True, read_only=True, source='interface_set')
-    error_logs = ErrorLogSerializer(many=True, read_only=True)
-    user_activities = UserActivitySerializer(many=True, read_only=True)
-    device_configurations = DeviceConfigurationSerializer(many=True, read_only=True)
-
+    error_logs = ErrorLogSerializer(many=True, read_only=True, source='errorlog_set')
+    user_activities = UserActivitySerializer(many=True, read_only=True, source='useractivity_set')
+    device_configurations = DeviceConfigurationSerializer(many=True, read_only=True, source='deviceconfiguration_set')
     class Meta:
         model = NetworkDevice
-        fields = ['id', 'name', 'device_type', 'location', 'interfaces', 'error_logs', 'user_activities', 'device_configurations']
+        fields = '__all__'
