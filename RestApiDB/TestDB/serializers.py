@@ -3,8 +3,6 @@ from rest_framework.serializers import ModelSerializer
 from .models import NetworkDevice, Interface, TrafficData, ErrorLog, UserActivity, BandwidthUsage, DeviceConfiguration
 from .models import AuthenticationLog, PerformanceMetrics, NetworkEvents, IPAddress, Configuration
 
-from .models import RoomCount, Apartment, Person
-
 class UserActivitySerializer(ModelSerializer):
     class Meta:
         model = UserActivity

@@ -6,8 +6,6 @@ from rest_framework.viewsets import ModelViewSet
 from TestDB.models import NetworkDevice
 from TestDB.serializers import NetworkDeviceSerializer
 
-from .models import Person
-from .serializers import PersonSerializer
 
 # Create your views here.
 
