@@ -67,7 +67,7 @@ class TrafficData(models.Model):
 # ├── id: Integer (PK)
 # ├── device: ForeignKey(NetworkDevice)
 # ├── timestamp: DateTime
-# └── error_type: String
+# ├──  error_type: String
 # └── description: Text
 
 class ErrorLog(models.Model):
