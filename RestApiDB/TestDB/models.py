@@ -50,7 +50,7 @@ class Interface(models.Model):
 # └── outbound_traffic: Float
 
 class TrafficData(models.Model):
-    interface = models.ForeignKey('Interface', on_delete=models.CASCADE, verbose_name='Интерфейс')
+    interface = models.ForeignKey(Interface, on_delete=models.CASCADE, verbose_name='Интерфейс')
     timestamp = models.DateTimeField(verbose_name='Время')
     inbound_traffic = models.FloatField(verbose_name='Входящий трафик')
     outbound_traffic = models.FloatField(verbose_name='Исходящий трафик')
@@ -71,7 +71,7 @@ class TrafficData(models.Model):
 # └── description: Text
 
 class ErrorLog(models.Model):
-    device = models.ForeignKey('NetworkDevice', on_delete=models.CASCADE, verbose_name='Устройство')
+    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Устройство')
     timestamp = models.DateTimeField(verbose_name='Время')
     error_type = models.CharField(max_length=100, verbose_name='Тип ошибки')
     description = models.TextField(verbose_name='Описание')
@@ -93,7 +93,7 @@ class ErrorLog(models.Model):
 
 class UserActivity(models.Model):
     user_id = models.CharField(max_length=100, verbose_name='ID пользователя')
-    device = models.ForeignKey('NetworkDevice', on_delete=models.CASCADE, verbose_name='Устройство')
+    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Устройство')
     timestamp = models.DateTimeField(verbose_name='Время')
     activity_type = models.CharField(max_length=100, verbose_name='Тип активности')
 
@@ -112,7 +112,7 @@ class UserActivity(models.Model):
 # └── bandwidth_usage: Float
 
 class BandwidthUsage(models.Model):
-    interface = models.ForeignKey('Interface', on_delete=models.CASCADE, verbose_name='Интерфейс')
+    interface = models.ForeignKey(Interface, on_delete=models.CASCADE, verbose_name='Интерфейс')
     timestamp = models.DateTimeField(verbose_name='Время')
     bandwidth_usage = models.FloatField(verbose_name='Использование полосы пропускания')
 
@@ -131,7 +131,7 @@ class BandwidthUsage(models.Model):
 # └── configuration_details: Text
 
 class DeviceConfiguration(models.Model):
-    device = models.ForeignKey('NetworkDevice', on_delete=models.CASCADE, verbose_name='Устройство')
+    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Устройство')
     configuration_timestamp = models.DateTimeField(verbose_name='Время конфигурации')
     configuration_details = models.TextField(verbose_name='Детали конфигурации')
 
@@ -152,7 +152,7 @@ class DeviceConfiguration(models.Model):
 
 class AuthenticationLog(models.Model):
     user_id = models.CharField(max_length=100, verbose_name='ID пользователя')
-    device = models.ForeignKey('NetworkDevice', on_delete=models.CASCADE, verbose_name='Устройство')
+    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Устройство')
     timestamp = models.DateTimeField(verbose_name='Время')
     action_type = models.CharField(max_length=100, verbose_name='Тип действия')
 
@@ -172,7 +172,7 @@ class AuthenticationLog(models.Model):
 # └── memory_usage: Float
 
 class PerformanceMetrics(models.Model):
-    device = models.ForeignKey('NetworkDevice', on_delete=models.CASCADE, verbose_name='Устройство')
+    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Устройство')
     timestamp = models.DateTimeField(verbose_name='Время')
     cpu_usage = models.FloatField(verbose_name='Использование ЦПУ')
     memory_usage = models.FloatField(verbose_name='Использование памяти')
@@ -193,7 +193,7 @@ class PerformanceMetrics(models.Model):
 #     └── severity_level: String
 
 class NetworkEvents(models.Model):
-    device = models.ForeignKey('NetworkDevice', on_delete=models.CASCADE, verbose_name='Устройство')
+    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Устройство')
     event_timestamp = models.DateTimeField(verbose_name='Время события')
     event_type = models.CharField(max_length=100, verbose_name='Тип события')
     severity_level = models.CharField(max_length=100, verbose_name='Уровень серьезности')
@@ -246,25 +246,6 @@ class Configuration(models.Model):
     def __str__(self):
         return f"Конфигурация для {self.device.name} от {self.date_added.strftime('%Y-%m-%d')}"
 
-class RoomCount(models.Model):
-    number_of_rooms = models.IntegerField()
-
-    def __str__(self):
-        return f"{self.number_of_rooms} комнат(ы)"
-
-class Apartment(models.Model):
-    address = models.CharField(max_length=255)
-    room_count = models.ForeignKey(RoomCount, on_delete=models.CASCADE, related_name='apartments')
-
-    def __str__(self):
-        return self.address
-
-class Person(models.Model):
-    name = models.CharField(max_length=100)
-    apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE, related_name='residents')
-
-    def __str__(self):
-        return self.name
 
 #Варианты построения графиков 
 # 1. "Динамика трафика (входящего/исходящего) по интерфейсам за выбранный период."

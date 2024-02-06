@@ -1,7 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 
-from .models import NetworkDevice, Interface, TrafficData, ErrorLog, UserActivity, BandwidthUsage, DeviceConfiguration
-from .models import AuthenticationLog, PerformanceMetrics, NetworkEvents, IPAddress, Configuration
+from .models import NetworkDevice, Interface, TrafficData, ErrorLog, UserActivity, BandwidthUsage, DeviceConfiguration, AuthenticationLog, PerformanceMetrics, NetworkEvents, IPAddress, Configuration
 
 class UserActivitySerializer(ModelSerializer):
     class Meta:
@@ -55,16 +54,22 @@ class ErrorLogSerializer(ModelSerializer):
 
 class InterfaceSerializer(ModelSerializer):
     traffic_data = TrafficDataSerializer(many=True, read_only=True, source='trafficdata_set')
-    bandwidth_usage = BandwidthUsageSerializer(many=True, read_only=True, source='bandwidthusage_set')
     class Meta:
         model = Interface
         fields = '__all__'
 
 class NetworkDeviceSerializer(ModelSerializer):
+    AuthenticationLog, PerformanceMetrics, NetworkEvents, IPAddress, Configuration
     interfaces = InterfaceSerializer(many=True, read_only=True, source='interface_set')
     error_logs = ErrorLogSerializer(many=True, read_only=True, source='errorlog_set')
     user_activities = UserActivitySerializer(many=True, read_only=True, source='useractivity_set')
     device_configurations = DeviceConfigurationSerializer(many=True, read_only=True, source='deviceconfiguration_set')
+    bandwidth_usage = BandwidthUsageSerializer(many=True, read_only=True, source='bandwidthusage_set')
+    authentication_log = AuthenticationLogSerializer(many=True, read_only=True, source='authenticationlog_set')
+    performance_metrics = PerformanceMetricsSerializer(many=True, read_only=True, source='performancemetrics_set')
+    network_events = NetworkEventsSerializer(many=True, read_only=True, source='networkevents_set')
+    ipaddress = IPAddressSerializer(many=True, read_only=True, source='ipaddress_set')
+    configurations = ConfigurationSerializer(many=True, read_only=True, source='configurations_set')
     class Meta:
         model = NetworkDevice
         fields = '__all__'
