@@ -6,14 +6,14 @@ from django.db import models
 # ├── id: Integer (PK)
 # ├── name: String
 # ├── device_type: String
-# └── location: String
-
+# ├── location: String
+# ├── uptime: Float (время работы устройства в часах (без)# uptime = models.CharField(verbose_name = "Время работы устройства в часах", max_length=50)) 
+# └── last_reboot_time: DateTime (время последней перезагрузки (без)# last_reboot_time = models.DateField(verbose_name = "Время последней перезагрузки"))
 
 class NetworkDevice(models.Model):
     """Сетевое устройство."""
     name = models.CharField(verbose_name='Название', max_length=150)
-    device_type = models.CharField(
-        verbose_name='Тип устройства', max_length=50)
+    device_type = models.CharField(verbose_name='Тип устройства', max_length=50)
     location = models.CharField(verbose_name='Местонахождение', max_length=150)
 
     class Meta:
@@ -28,16 +28,17 @@ class NetworkDevice(models.Model):
 # ├── id: Integer (PK)
 # ├── device: ForeignKey(NetworkDevice)
 # ├── name: String
-# └── status: String
-
+# ├── status: String
+# ├── speed: Integer (скорость интерфейса в Мбит/сек)
+# └── duplex_mode: String (режим дуплекса - полный или половинный)
 
 class Interface(models.Model):
     """Интерфейс сетевого устройства."""
-    device = models.ForeignKey(
-        NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
+    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
     name = models.CharField(verbose_name='Название интерфейса', max_length=100)
-    networkBandWidth = models.FloatField(verbose_name="Пропускная способность")
+    speed = models.IntegerField(verbose_name="Скорость интерфейса в Мбит/сек")
     status = models.CharField(verbose_name='Статус', max_length=50)
+    duplex_mode = models.TextField(verbose_name = "Режим дуплекса - полный или половинный", max_length=50)
 
     class Meta:
         verbose_name = 'Интерфейс'
@@ -52,8 +53,9 @@ class Interface(models.Model):
 # ├── interface: ForeignKey(Interface)
 # ├── timestamp: DateTime
 # ├── inbound_traffic: Float
-# └── outbound_traffic: Float
-
+# ├── outbound_traffic: Float
+# ├── total_packets: Integer (общее количество пакетов)
+# └── error_packets: Integer (количество пакетов с ошибками)
 
 class TrafficData(models.Model):
     interface = models.ForeignKey(
@@ -61,6 +63,8 @@ class TrafficData(models.Model):
     timestamp = models.DateTimeField(verbose_name='Время')
     inbound_traffic = models.FloatField(verbose_name='Входящий трафик')
     outbound_traffic = models.FloatField(verbose_name='Исходящий трафик')
+    total_packets = models.IntegerField(verbose_name="Общее количество пакетов")
+    error_packets = models.IntegerField(verbose_name="Количество пакетов с ошибками")
 
     class Meta:
         verbose_name = 'Данные о трафике'
@@ -76,7 +80,6 @@ class TrafficData(models.Model):
 # ├── timestamp: DateTime
 # ├──  error_type: String
 # └── description: Text
-
 
 class ErrorLog(models.Model):
     device = models.ForeignKey(
@@ -122,7 +125,6 @@ class UserActivity(models.Model):
 # ├── interface: ForeignKey(Interface)
 # ├── timestamp: DateTime
 # └── bandwidth_usage: Float
-
 
 class BandwidthUsage(models.Model):
     interface = models.ForeignKey(
@@ -190,8 +192,8 @@ class AuthenticationLog(models.Model):
 # ├── device: ForeignKey(NetworkDevice)
 # ├── timestamp: DateTime
 # ├── cpu_usage: Float
-# └── memory_usage: Float
-
+# ├── memory_usage: Float
+# └── storage_usage: Float (использование хранилища)
 
 class PerformanceMetrics(models.Model):
     device = models.ForeignKey(
@@ -199,6 +201,7 @@ class PerformanceMetrics(models.Model):
     timestamp = models.DateTimeField(verbose_name='Время')
     cpu_usage = models.FloatField(verbose_name='Использование ЦПУ')
     memory_usage = models.FloatField(verbose_name='Использование памяти')
+    storage_ussage = models.FloatField(verbose_name="Использование хранилища")
 
     class Meta:
         verbose_name = 'Метрики производительности'
@@ -212,17 +215,15 @@ class PerformanceMetrics(models.Model):
 # ├── id: Integer (PK)
 # ├── device: ForeignKey(NetworkDevice)
 # ├── event_timestamp: DateTime
-# └── event_type: String
-#     └── severity_level: String
-
+# ├── event_type: String
+# └── severity_level: String
+#     └── affected_services: String (затронутые услуги) ------------------------------------------------------
 
 class NetworkEvents(models.Model):
-    device = models.ForeignKey(
-        NetworkDevice, on_delete=models.CASCADE, verbose_name='Устройство')
+    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Устройство')
     event_timestamp = models.DateTimeField(verbose_name='Время события')
     event_type = models.CharField(max_length=100, verbose_name='Тип события')
-    severity_level = models.CharField(
-        max_length=100, verbose_name='Уровень серьезности')
+    severity_level = models.CharField(max_length=100, verbose_name='Уровень серьезности')
 
     class Meta:
         verbose_name = 'Сетевое событие'
@@ -241,11 +242,9 @@ class NetworkEvents(models.Model):
 
 class IPAddress(models.Model):
     """IP-адрес сетевого устройства."""
-    device = models.ForeignKey(
-        NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
+    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
     ip_address = models.GenericIPAddressField(verbose_name='IP-адрес')
-    is_primary = models.BooleanField(
-        default=False, verbose_name='Основной адрес?')
+    is_primary = models.BooleanField(default=False, verbose_name='Основной адрес?')
 
     class Meta:
         verbose_name = 'IP-адрес'
@@ -260,7 +259,6 @@ class IPAddress(models.Model):
 # ├── device: ForeignKey(NetworkDevice)
 # ├── configuration_text: TextField
 # └── date_added: DateTimeField
-
 
 class Configuration(models.Model):
     """Конфигурация сетевого устройства."""
@@ -278,23 +276,86 @@ class Configuration(models.Model):
     def __str__(self):
         return f"Конфигурация для {self.device.name} от {self.date_added.strftime('%Y-%m-%d')}"
 
+# DeviceTemperature
+# ├── id: Integer (PK)
+# ├── device: ForeignKey(NetworkDevice)
+# ├── timestamp: DateTime
+# └── temperature: Float (температура устройства)
 
-'''class SOV(models.Model):
-    """Система обнаружения вторжения."""
-    device = models.ForeignKey(
-        NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
-    configuration_text = models.TextField(verbose_name='Текст конфигурации')
-    date_added = models.DateTimeField(
-        auto_now_add=True, verbose_name='Дата добавления')
+class DeviceTemperature(models.Model):
+    """Температура устройства."""
+    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
+    timestamp = models.DateTimeField(verbose_name='Время')
+    temperature = models.FloatField(verbose_name='Температура устройства')
 
     class Meta:
-        verbose_name = 'Конфигурация'
-        verbose_name_plural = 'Конфигурации'
-        db_table = 'configuration'
+        verbose_name = 'Температура устройства'
+        verbose_name_plural = 'Температура устройства'
+        db_table = 'devicetemperature'
 
     def __str__(self):
-        return f"Конфигурация для {self.device.name} от {self.date_added.strftime('%Y-%m-%d')}"'''
+        return f"Температура {self.temperature} {self.timestamp.strftime('%Y-%m-%d')}"
 
+# PowerConsumption
+# ├── id: Integer (PK)
+# ├── device: ForeignKey(NetworkDevice)
+# ├── timestamp: DateTime
+# └── power_consumption: Float (потребление энергии)
+
+class PowerConsumption(models.Model):
+    """Потребление энергии."""
+    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
+    timestamp = models.DateTimeField(verbose_name='Время')
+    power_consumption = models.FloatField(verbose_name='Потребление энергии')
+
+    class Meta:
+        verbose_name = 'Потребление энергии'
+        verbose_name_plural = 'Потребление энергии'
+        db_table = 'рowerсonsumption'
+
+    def __str__(self):
+        return f"Расход энергии {self.power_consumption} {self.timestamp.strftime('%Y-%m-%d')}"
+
+# LatencyData
+# ├── id: Integer (PK)
+# ├── device: ForeignKey(NetworkDevice)
+# ├── timestamp: DateTime
+# └── latency: Float (задержка)
+
+class LatencyData(models.Model):
+    """Данные о задержке."""
+    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
+    timestamp = models.DateTimeField(verbose_name='Время')
+    latency = models.FloatField(verbose_name='Задержка')
+
+    class Meta:
+        verbose_name = 'Задержка'
+        verbose_name_plural = 'Задержка'
+        db_table = 'latencydata'
+
+    def __str__(self):
+        return f"Задержка сети {self.latency} {self.timestamp.strftime('%Y-%m-%d')}"
+
+# PacketLossData
+# ├── id: Integer (PK)
+# ├── device: ForeignKey(NetworkDevice)
+# ├── timestamp: DateTime
+# └── packet_loss: Float (потеря пакетов)
+
+
+class PacketLossData(models.Model):
+    """Данные о потере пакетов."""
+    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
+    timestamp = models.DateTimeField(verbose_name='Время')
+    packet_loss = models.FloatField(verbose_name='Потеря пакетов')
+
+    class Meta:
+        verbose_name = 'Потеря пакетов'
+        verbose_name_plural = 'Потеря пакетов'
+        db_table = 'packetlossdata'
+
+    def __str__(self):
+        return f"Потеря пакетов {self.packet_loss} {self.timestamp.strftime('%Y-%m-%d')}"
 
 # Варианты построения графиков
 # 1. "Динамика трафика (входящего/исходящего) по интерфейсам за выбранный период."
@@ -307,7 +368,7 @@ class Configuration(models.Model):
 # 8. "Распределение типов сетевых событий по уровню серьезности."
 
 
-# ### 1. График использования трафика по времени
+# ### 1. График использования трафика по network_device.last_reboot_time
 # Используя данные из таблицы TrafficData, можно построить график, показывающий изменение входящего и исходящего трафика во времени для конкретного интерфейса или для всех интерфейсов сетевого устройства.
 # Это поможет определить пики активности и возможные проблемы с пропускной способностью.
 

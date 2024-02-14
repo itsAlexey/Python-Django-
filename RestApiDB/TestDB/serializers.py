@@ -1,6 +1,9 @@
 from rest_framework.serializers import ModelSerializer
 
-from .models import NetworkDevice, Interface, TrafficData, ErrorLog, UserActivity, BandwidthUsage, DeviceConfiguration, AuthenticationLog, PerformanceMetrics, NetworkEvents, IPAddress, Configuration
+from .models import NetworkDevice, Interface, TrafficData, ErrorLog, UserActivity,\
+    BandwidthUsage, DeviceConfiguration, AuthenticationLog, PerformanceMetrics, \
+    NetworkEvents, IPAddress, Configuration \
+    , DeviceTemperature, PowerConsumption, LatencyData, PacketLossData
 
 class UserActivitySerializer(ModelSerializer):
     class Meta:
@@ -52,6 +55,26 @@ class ErrorLogSerializer(ModelSerializer):
         model = ErrorLog
         fields = '__all__'
 
+class DeviceTemperatureSerializer(ModelSerializer):
+    class Meta:
+        model = DeviceTemperature
+        fields = '__all__'
+
+class PowerConsumptionSerializer(ModelSerializer):
+    class Meta:
+        model = PowerConsumption
+        fields = '__all__'
+
+class LatencyDataSerializer(ModelSerializer):
+    class Meta:
+        model = LatencyData
+        fields = '__all__'
+
+class PacketLossDataSerializer(ModelSerializer):
+    class Meta:
+        model = PacketLossData
+        fields = '__all__'
+
 class InterfaceSerializer(ModelSerializer):
     traffic_data = TrafficDataSerializer(many=True, read_only=True, source='trafficdata_set')
     class Meta:
@@ -70,6 +93,11 @@ class NetworkDeviceSerializer(ModelSerializer):
     network_events = NetworkEventsSerializer(many=True, read_only=True, source='networkevents_set')
     ipaddress = IPAddressSerializer(many=True, read_only=True, source='ipaddress_set')
     configurations = ConfigurationSerializer(many=True, read_only=True, source='configurations_set')
+    devicetemperature = DeviceTemperatureSerializer(many=True, read_only=True, source='devicetemperatures_set')
+    powerconsumption = PowerConsumptionSerializer(many=True, read_only=True, source='рowerсonsumptions_set')
+    latencydata = LatencyDataSerializer(many=True, read_only=True, source='latencydatas_set')
+    packetlossdata = PacketLossDataSerializer(many=True, read_only=True, source='packetlossdatas_set')
+    
     class Meta:
         model = NetworkDevice
         fields = '__all__'
