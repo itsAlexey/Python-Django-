@@ -38,7 +38,7 @@ class Interface(models.Model):
     """Интерфейс сетевого устройства."""
     device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
     name = models.CharField(verbose_name='Название интерфейса', max_length=100)
-    speed = models.IntegerField(verbose_name="Скорость интерфейса в Мбит/сек")
+    speed = models.FloatField(verbose_name="Скорость интерфейса в Мбит/сек")
     status = models.CharField(verbose_name='Статус', max_length=50)
     duplex_mode = models.TextField(verbose_name="Режим дуплекса - полный или половинный", max_length=50)
 
@@ -65,8 +65,8 @@ class TrafficData(models.Model):
     timestamp = models.DateTimeField(verbose_name='Время')
     inbound_traffic = models.FloatField(verbose_name='Входящий трафик')
     outbound_traffic = models.FloatField(verbose_name='Исходящий трафик')
-    total_packets = models.IntegerField(verbose_name="Общее количество пакетов")
-    error_packets = models.IntegerField(verbose_name="Количество пакетов с ошибками")
+    total_packets = models.FloatField(verbose_name="Общее количество пакетов")
+    error_packets = models.FloatField(verbose_name="Количество пакетов с ошибками")
 
     class Meta:
         verbose_name = 'Данные о трафике'
@@ -196,7 +196,7 @@ class PerformanceMetrics(models.Model):
     timestamp = models.DateTimeField(verbose_name='Время')
     cpu_usage = models.FloatField(verbose_name='Использование ЦПУ')
     memory_usage = models.FloatField(verbose_name='Использование памяти')
-    storage_ussage = models.FloatField(verbose_name="Использование хранилища")
+    storage_ussage = models.CharField(verbose_name="Использование хранилища", max_length=10)
 
     class Meta:
         verbose_name = 'Метрики производительности'
@@ -303,7 +303,7 @@ class PowerConsumption(models.Model):
     """Потребление энергии."""
     device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
     timestamp = models.DateTimeField(verbose_name='Время')
-    power_consumption = models.FloatField(verbose_name='Потребление энергии')
+    power_consumption = models.CharField(verbose_name='Потребление энергии', max_length=5)
 
     class Meta:
         verbose_name = 'Потребление энергии'
@@ -311,7 +311,7 @@ class PowerConsumption(models.Model):
         db_table = 'рowerсonsumption'
 
     def __str__(self):
-        return f"Расход энергии {self.power_consumption} {self.timestamp.strftime('%Y-%m-%d')}"
+        return f"Расход энергии {self.device} {self.timestamp.strftime('%Y-%m-%d')}"
 
 # LatencyData
 # ├── id: Integer (PK)
