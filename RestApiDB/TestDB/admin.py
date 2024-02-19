@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import NetworkDevice, Interface, TrafficData, ErrorLog, UserActivity, \
     BandwidthUsage, DeviceConfiguration, AuthenticationLog, PerformanceMetrics, NetworkEvents, \
-    IPAddress, Configuration, DeviceTemperature, PowerConsumption, LatencyData, PacketLossData, Users
+    IPAddress, Configuration, DeviceTemperature, PowerConsumption,  PacketLossData, Users, TypeDevices, HostDevice
 # Register your models here.
 
 admin.site.register(NetworkDevice)
@@ -18,6 +18,7 @@ admin.site.register(IPAddress)
 admin.site.register(Configuration)
 admin.site.register(DeviceTemperature)
 admin.site.register(PowerConsumption)
-admin.site.register(LatencyData)
 admin.site.register(PacketLossData)
 admin.site.register(Users)
+admin.site.register(TypeDevices)
+admin.site.register(HostDevice)

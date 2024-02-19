@@ -3,7 +3,7 @@ from rest_framework.serializers import ModelSerializer
 from .models import NetworkDevice, Interface, TrafficData, ErrorLog, UserActivity,\
     BandwidthUsage, DeviceConfiguration, AuthenticationLog, PerformanceMetrics, \
     NetworkEvents, IPAddress, Configuration \
-    , DeviceTemperature, PowerConsumption, LatencyData, PacketLossData
+    , DeviceTemperature, PowerConsumption, PacketLossData
 
 class UserActivitySerializer(ModelSerializer):
     class Meta:
@@ -65,11 +65,6 @@ class PowerConsumptionSerializer(ModelSerializer):
         model = PowerConsumption
         fields = '__all__'
 
-class LatencyDataSerializer(ModelSerializer):
-    class Meta:
-        model = LatencyData
-        fields = '__all__'
-
 class PacketLossDataSerializer(ModelSerializer):
     class Meta:
         model = PacketLossData
@@ -95,7 +90,6 @@ class NetworkDeviceSerializer(ModelSerializer):
     configurations = ConfigurationSerializer(many=True, read_only=True, source='configurations_set')
     devicetemperature = DeviceTemperatureSerializer(many=True, read_only=True, source='devicetemperatures_set')
     powerconsumption = PowerConsumptionSerializer(many=True, read_only=True, source='рowerсonsumptions_set')
-    latencydata = LatencyDataSerializer(many=True, read_only=True, source='latencydatas_set')
     packetlossdata = PacketLossDataSerializer(many=True, read_only=True, source='packetlossdatas_set')
     
     class Meta:

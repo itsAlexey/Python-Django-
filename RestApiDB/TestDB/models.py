@@ -1,5 +1,4 @@
 from django.db import models
-
 # Create your models here.
 
 # NetworkDevice
@@ -232,6 +231,7 @@ class PerformanceMetrics(models.Model):
 
 
 class NetworkEvents(models.Model):
+    "Сетевые события"
     device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Устройство')
     event_timestamp = models.DateTimeField(verbose_name='Время события')
     event_type = models.CharField(max_length=100, verbose_name='Тип события')
@@ -329,27 +329,6 @@ class PowerConsumption(models.Model):
     def __str__(self):
         return f"Расход энергии {self.device} {self.timestamp.strftime('%Y-%m-%d')}"
 
-# LatencyData
-# ├── id: Integer (PK)
-# ├── device: ForeignKey(NetworkDevice)
-# ├── timestamp: DateTime
-# └── latency: Float (задержка)
-
-
-class LatencyData(models.Model):
-    """Данные о задержке."""
-    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
-    timestamp = models.DateTimeField(verbose_name='Время')
-    latency = models.FloatField(verbose_name='Задержка')
-
-    class Meta:
-        verbose_name = 'Задержка'
-        verbose_name_plural = 'Задержка'
-        db_table = 'latencydata'
-
-    def __str__(self):
-        return f"Задержка сети {self.latency} {self.timestamp.strftime('%Y-%m-%d')}"
-
 # PacketLossData
 # ├── id: Integer (PK)
 # ├── device: ForeignKey(NetworkDevice)
@@ -370,6 +349,48 @@ class PacketLossData(models.Model):
 
     def __str__(self):
         return f"Потеря пакетов {self.packet_loss} {self.timestamp.strftime('%Y-%m-%d')}"
+
+# TypeDevices
+# ├── type: string
+# ├── serial_number: string
+# └── about: Float
+
+class TypeDevices(models.Model):
+    type = models.CharField(verbose_name="Тип устройства", max_length=50)
+    serial_number = models.CharField(verbose_name="Серийный номер", max_length=50)
+    about = models.CharField(verbose_name="Об устройстве", max_length=200, blank=True)
+    
+    class Meta:
+        verbose_name = 'Тип устройства'
+        verbose_name_plural = 'Тип устройства'
+        db_table = 'typedevice'
+
+    def __str__(self):
+        return f"{self.type} / {self.serial_number}"
+
+# HostDevice
+# ├── id: Integer (PK)
+# ├── device: ForeignKey()
+# ├── device: ForeignKey()
+# ├── timestamp: DateTime
+# └── packet_loss: Float (потеря пакетов)
+
+class HostDevice(models.Model):
+    """Хост устройства"""
+    name = models.CharField(verbose_name="Название", max_length=30)
+    type = models.ForeignKey(TypeDevices, on_delete=models.CASCADE, verbose_name='Тип устройства')
+    ip_address = models.ForeignKey(IPAddress, on_delete=models.CASCADE, verbose_name="IP адрес")
+    packet_loss = models.FloatField(verbose_name='Потеря пакетов')
+    MAC_address = models.CharField(verbose_name='МАС адрес', max_length=12)
+    packet_loss = models.FloatField(verbose_name='Потеря пакетов')
+
+    class Meta:
+        verbose_name = 'Хосты'
+        verbose_name_plural = 'Хосты'
+        db_table = 'host'
+
+    def __str__(self):
+        return f"Потеря пакетов {self.type.type} {self.name}"
 
 # Варианты построения графиков
 # 1. "Динамика трафика (входящего/исходящего) по интерфейсам за выбранный период."
