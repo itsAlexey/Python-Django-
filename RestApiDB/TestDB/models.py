@@ -98,17 +98,34 @@ class ErrorLog(models.Model):
     def __str__(self):
         return f"{self.device} - {self.error_type} - {self.timestamp}"
 
-# UserActivity
+# User
 # ├── id: Integer (PK)
+# ├── user_id: String
+# └── username: String
+
+class Users(models.Model):
+    user_id = models.CharField(verbose_name="ID пользователя", max_length=10)
+    name = models.CharField(verbose_name="Имя", max_length=20)
+    surname = models.CharField(verbose_name="Фамилия", max_length=20)
+    lastname = models.CharField(verbose_name="Отчество", max_length=20)
+
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+        db_table = 'user'
+
+    def __str__(self):
+        return f"{self.user_id} - {self.name} - {self.surname} - {self.lastname}"
+
+# UserActivity
+# ├── id: Integer (PK) 
 # ├── user_id: String
 # ├── device: ForeignKey(NetworkDevice)
 # ├── timestamp: DateTime
 # └── activity_type: String
 
-
 class UserActivity(models.Model):
-    user_id = models.CharField(max_length=100, verbose_name='ID пользователя')
-    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Устройство')
+    user = models.ForeignKey(Users, on_delete = models.CASCADE, verbose_name='Пользователь')
     timestamp = models.DateTimeField(verbose_name='Время')
     activity_type = models.CharField(max_length=100, verbose_name='Тип активности')
 
@@ -118,7 +135,7 @@ class UserActivity(models.Model):
         db_table = 'user_activity'
 
     def __str__(self):
-        return f"{self.user_id} - {self.activity_type} - {self.timestamp}"
+        return f"{self.user.user_id} - {self.activity_type} - {self.timestamp}"
 
 # BandwidthUsage
 # ├── id: Integer (PK)
@@ -212,7 +229,6 @@ class PerformanceMetrics(models.Model):
 # ├── event_timestamp: DateTime
 # ├── event_type: String
 # └── severity_level: String
-#     └── affected_services: String (затронутые услуги) ------------------------------------------------------
 
 
 class NetworkEvents(models.Model):
