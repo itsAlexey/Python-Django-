@@ -213,7 +213,7 @@ class PerformanceMetrics(models.Model):
     timestamp = models.DateTimeField(verbose_name='Время')
     cpu_usage = models.FloatField(verbose_name='Использование ЦПУ')
     memory_usage = models.FloatField(verbose_name='Использование памяти')
-    storage_ussage = models.CharField(verbose_name="Использование хранилища", max_length=10)
+    storage_ussage = models.FloatField(verbose_name="Использование хранилища")
 
     class Meta:
         verbose_name = 'Метрики производительности'
@@ -319,7 +319,7 @@ class PowerConsumption(models.Model):
     """Потребление энергии."""
     device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
     timestamp = models.DateTimeField(verbose_name='Время')
-    power_consumption = models.CharField(verbose_name='Потребление энергии', max_length=5)
+    power_consumption = models.FloatField(verbose_name='Потребление энергии', max_length=5)
 
     class Meta:
         verbose_name = 'Потребление энергии'
