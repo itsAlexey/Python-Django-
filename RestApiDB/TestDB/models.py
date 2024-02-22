@@ -25,26 +25,6 @@ class UserActivity(models.Model):
     def __str__(self):
         return f"{self.user_id} - {self.activity_type} - {self.timestamp}"
 
-# BandwidthUsage
-# ├── id: Integer (PK)
-# ├── interface: ForeignKey(Interface)
-# ├── timestamp: DateTime
-# └── bandwidth_usage: Float
-
-
-class BandwidthUsage(models.Model):
-    interface = models.ForeignKey(Interface, on_delete=models.CASCADE, verbose_name='Интерфейс')
-    timestamp = models.DateTimeField(verbose_name='Время')
-    bandwidth_usage = models.FloatField(verbose_name='Использование полосы пропускания')
-
-    class Meta:
-        verbose_name = 'Использование полосы пропускания'
-        verbose_name_plural = 'Использование полос пропускания'
-        db_table = 'bandwidth_usage'
-
-    def __str__(self):
-        return f"{self.interface} - {self.timestamp}"
-
 # DeviceConfiguration
 # ├── id: Integer (PK)
 # ├── device: ForeignKey(NetworkDevice)
@@ -111,29 +91,6 @@ class PerformanceMetrics(models.Model):
     def __str__(self):
         return f"{self.device} - {self.timestamp}"
 
-# NetworkEvents
-# ├── id: Integer (PK)
-# ├── device: ForeignKey(NetworkDevice)
-# ├── event_timestamp: DateTime
-# ├── event_type: String
-# └── severity_level: String
-#     └── affected_services: String (затронутые услуги)
-
-
-class NetworkEvents(models.Model):
-    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Устройство')
-    event_timestamp = models.DateTimeField(verbose_name='Время события')
-    event_type = models.CharField(max_length=100, verbose_name='Тип события')
-    severity_level = models.CharField(max_length=100, verbose_name='Уровень серьезности')
-
-    class Meta:
-        verbose_name = 'Сетевое событие'
-        verbose_name_plural = 'Сетевые события'
-        db_table = 'network_events'
-
-    def __str__(self):
-        return f"{self.device} - {self.event_type} - {self.event_timestamp}"
-
 # IPAddress
 # ├── id: Integer (PK)
 # ├── device: ForeignKey(NetworkDevice)
@@ -155,96 +112,11 @@ class IPAddress(models.Model):
     def __str__(self):
         return self.ip_address
 
-# Configuration
-# ├── id: Integer (PK)
-# ├── device: ForeignKey(NetworkDevice)
-# ├── configuration_text: TextField
-# └── date_added: DateTimeField
-
-
-class Configuration(models.Model):
-    """Конфигурация сетевого устройства."""
-    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
-    configuration_text = models.TextField(verbose_name='Текст конфигурации')
-    date_added = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавления')
-
-    class Meta:
-        verbose_name = 'Конфигурация'
-        verbose_name_plural = 'Конфигурации'
-        db_table = 'configuration'
-
-    def __str__(self):
-        return f"Конфигурация для {self.device.name} от {self.date_added.strftime('%Y-%m-%d')}"
-
-# DeviceTemperature
-# ├── id: Integer (PK)
-# ├── device: ForeignKey(NetworkDevice)
-# ├── timestamp: DateTime
-# └── temperature: Float (температура устройства)
-
-
-class DeviceTemperature(models.Model):
-    """Температура устройства."""
-    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
-    timestamp = models.DateTimeField(verbose_name='Время')
-    temperature = models.FloatField(verbose_name='Температура устройства')
-
-    class Meta:
-        verbose_name = 'Температура устройства'
-        verbose_name_plural = 'Температура устройства'
-        db_table = 'devicetemperature'
-
-    def __str__(self):
-        return f"Температура {self.temperature} {self.timestamp.strftime('%Y-%m-%d')}"
-
-# PowerConsumption
-# ├── id: Integer (PK)
-# ├── device: ForeignKey(NetworkDevice)
-# ├── timestamp: DateTime
-# └── power_consumption: Float (потребление энергии)
-
-
-class PowerConsumption(models.Model):
-    """Потребление энергии."""
-    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
-    timestamp = models.DateTimeField(verbose_name='Время')
-    power_consumption = models.FloatField(verbose_name='Потребление энергии')
-
-    class Meta:
-        verbose_name = 'Потребление энергии'
-        verbose_name_plural = 'Потребление энергии'
-        db_table = 'рowerсonsumption'
-
-    def __str__(self):
-        return f"Расход энергии {self.power_consumption} {self.timestamp.strftime('%Y-%m-%d')}"
-
-# LatencyData
-# ├── id: Integer (PK)
-# ├── device: ForeignKey(NetworkDevice)
-# ├── timestamp: DateTime
-# └── latency: Float (задержка)
-
-
-class LatencyData(models.Model):
-    """Данные о задержке."""
-    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
-    timestamp = models.DateTimeField(verbose_name='Время')
-    latency = models.FloatField(verbose_name='Задержка')
-
-    class Meta:
-        verbose_name = 'Задержка'
-        verbose_name_plural = 'Задержка'
-        db_table = 'latencydata'
-
-    def __str__(self):
-        return f"Задержка сети {self.latency} {self.timestamp.strftime('%Y-%m-%d')}"
-
 # PacketLossData
 # ├── id: Integer (PK)
 # ├── device: ForeignKey(NetworkDevice)
 # ├── timestamp: DateTime
 # └── packet_loss: Float (потеря пакетов)
-
 
 class PacketLossData(models.Model):
     """Данные о потере пакетов."""
@@ -331,9 +203,12 @@ class PacketLossData(models.Model):
 # ├── name: String
 # ├── device_type: String
 # ├── location: String
-# ├── interfaceND = ForeignKey(Interface)
-# ├── typeNetDevicesND = ForeignKey(TypeDevices)
-# └── ErrorLogND = ForeignKey(ErrorLog)
+# ├── interfaceND: ForeignKey(Interface)
+# ├── typeNetDevicesND: ForeignKey(TypeDevices)
+# ├── networkDeviceTemperature: ForeignKey(NetworkDeviceTemperature)
+
+# ├── networkEventsInterface: ForeignKey(NetworkEvents)
+# └── ErrorLogND: ForeignKey(ErrorLog)
 
 class NetworkDevice(models.Model):
     """Сетевое устройство."""
@@ -343,7 +218,20 @@ class NetworkDevice(models.Model):
     
     interfaceND = models.ForeignKey('Interface', on_delete=models.PROTECT, null=True, verbose_name="Интерфейс")
     typeNetDevicesND = models.ForeignKey('TypeDevices', on_delete=models.PROTECT, null=True, verbose_name="Тип сетевого устройства")
-    ErrorLogND = models.ForeignKey('ErrorLog', on_delete=models.PROTECT, null=True, verbose_name="Логи ошибок")
+    networkEventsInterface = models.ForeignKey('NetworkEvents', on_delete=models.PROTECT, null=True, verbose_name="Сетевые события")
+    networkDeviceTemperature = models.ForeignKey('NetworkDeviceTemperature', on_delete=models.PROTECTED, null=True, verbose_name="Температура устрйоства")
+    PowerConsumption = models.ForeignKey('PowerConsumption', on_delete=models.PROTECTED, null=True, verbose_name="Потребление энергии")
+    = models.ForeignKey('', on_delete=models.PROTECTED, null=True, verbose_name="")
+    = models.ForeignKey('', on_delete=models.PROTECTED, null=True, verbose_name="")
+    = models.ForeignKey('', on_delete=models.PROTECTED, null=True, verbose_name="")
+    = models.ForeignKey('', on_delete=models.PROTECTED, null=True, verbose_name="")
+    = models.ForeignKey('', on_delete=models.PROTECTED, null=True, verbose_name="")
+    = models.ForeignKey('', on_delete=models.PROTECTED, null=True, verbose_name="")
+    = models.ForeignKey('', on_delete=models.PROTECTED, null=True, verbose_name="")
+    = models.ForeignKey('', on_delete=models.PROTECTED, null=True, verbose_name="")
+    = models.ForeignKey('', on_delete=models.PROTECTED, null=True, verbose_name="")
+    = models.ForeignKey('', on_delete=models.PROTECTED, null=True, verbose_name="")
+    
     
     class Meta:
         verbose_name = 'Сетевое устройство'
@@ -359,6 +247,8 @@ class NetworkDevice(models.Model):
 # ├── name: String
 # ├── status: String
 # ├── speed: Integer (скорость интерфейса в Мбит/сек)
+# ├── trafficDataInterface: ForeignKey(TrafficData)
+# ├── trafficDataInterface: ForeignKey(BandwidthUsage)
 # └── duplex_mode: String (режим дуплекса - полный или половинный)
 
 class Interface(models.Model):
@@ -368,7 +258,8 @@ class Interface(models.Model):
     status = models.CharField(verbose_name='Статус', max_length=50)
     duplex_mode = models.TextField(verbose_name="Режим дуплекса - полный или половинный", max_length=50)
 
-    trafficDataInterface = models.ForeignKey('TrafficData', on_delete=models.PROTECT, null=True)
+    trafficDataInterface = models.ForeignKey('TrafficData', on_delete=models.PROTECT, null=True, verbose_name="Данные о трафике")
+    bandwidthUsageInterface = models.ForeignKey('BandwidthUsage', on_delete=models.PROTECT, null=True, verbose_name="Использование полосы пропускания")
 
     class Meta:
         verbose_name = 'Интерфейс'
@@ -384,6 +275,7 @@ class Interface(models.Model):
 # └── about: string
 
 class TypeDevices(models.Model):
+    """Тип устройства"""
     type = models.CharField(verbose_name="Тип устройства", max_length=50)
     serial_number = models.CharField(verbose_name="Серийный номер", max_length=50)
     about = models.CharField(verbose_name="Об устройстве", max_length=200, blank=True)
@@ -398,7 +290,6 @@ class TypeDevices(models.Model):
 
 # TrafficData
 # ├── id: Integer (PK)
-# ├── interface: ForeignKey(Interface)
 # ├── timestamp: DateTime
 # ├── inbound_traffic: Float
 # ├── outbound_traffic: Float
@@ -406,7 +297,7 @@ class TypeDevices(models.Model):
 # └── error_packets: Integer (количество пакетов с ошибками)
 
 class TrafficData(models.Model):
-    # interface = models.ForeignKey(Interface, on_delete=models.CASCADE, verbose_name='Интерфейс')
+    """Данные о трафике"""
     timestamp = models.DateTimeField(verbose_name='Время')
     inbound_traffic = models.FloatField(verbose_name='Входящий трафик')
     outbound_traffic = models.FloatField(verbose_name='Исходящий трафик')
@@ -421,23 +312,76 @@ class TrafficData(models.Model):
     def __str__(self):
         return f"{self.interface} - {self.timestamp}"
 
-# ErrorLog
+# BandwidthUsage
 # ├── id: Integer (PK)
-# ├── device: ForeignKey(NetworkDevice)
 # ├── timestamp: DateTime
-# ├──  error_type: String
-# └── description: Text
+# └── bandwidth_usage: Float
 
-class ErrorLog(models.Model):
+class BandwidthUsage(models.Model):
+    """Использование полосы пропускания"""
     timestamp = models.DateTimeField(verbose_name='Время')
-    error_type = models.CharField(max_length=100, verbose_name='Тип ошибки')
-    description = models.TextField(verbose_name='Описание')
+    bandwidth_usage = models.FloatField(verbose_name='Использование полосы пропускания')
 
     class Meta:
-        verbose_name = 'Журнал ошибок'
-        verbose_name_plural = 'Журналы ошибок'
-        db_table = 'error_log'
+        verbose_name = 'Использование полосы пропускания'
+        verbose_name_plural = 'Использование полос пропускания'
+        db_table = 'bandwidth_usage'
 
     def __str__(self):
-        return f"{self.device} - {self.error_type} - {self.timestamp}"
+        return f"{self.interface} - {self.timestamp}"
 
+# NetworkEvents
+# ├── id: Integer (PK)
+# ├── event_timestamp: DateTime
+# ├── event_type: String
+# └── severity_level: String
+
+class NetworkEvents(models.Model):
+    """Сетевые события"""
+    event_timestamp = models.DateTimeField(verbose_name='Время события')
+    event_type = models.CharField(max_length=100, verbose_name='Тип события')
+    severity_level = models.CharField(max_length=100, verbose_name='Уровень серьезности')
+
+    class Meta:
+        verbose_name = 'Сетевое событие'
+        verbose_name_plural = 'Сетевые события'
+        db_table = 'network_events'
+
+    def __str__(self):
+        return f"{self.device} - {self.event_type} - {self.event_timestamp}"
+
+# DeviceTemperature
+# ├── id: Integer (PK)
+# ├── timestamp: DateTime
+# └── temperature: Float (температура устройства)
+
+class DeviceTemperature(models.Model):
+    """Температура устройства."""
+    timestamp = models.DateTimeField(verbose_name='Время')
+    temperature = models.FloatField(verbose_name='Температура устройства')
+
+    class Meta:
+        verbose_name = 'Температура устройства'
+        verbose_name_plural = 'Температура устройства'
+        db_table = 'devicetemperature'
+
+    def __str__(self):
+        return f"Температура {self.temperature} {self.timestamp.strftime('%Y-%m-%d')}"
+
+# PowerConsumption
+# ├── id: Integer (PK)
+# ├── timestamp: DateTime
+# └── power_consumption: Float (потребление энергии)
+
+class PowerConsumption(models.Model):
+    """Потребление энергии."""
+    timestamp = models.DateTimeField(verbose_name='Время')
+    power_consumption = models.FloatField(verbose_name='Потребление энергии')
+
+    class Meta:
+        verbose_name = 'Потребление энергии'
+        verbose_name_plural = 'Потребление энергии'
+        db_table = 'рowerсonsumption'
+
+    def __str__(self):
+        return f"Расход энергии {self.power_consumption} {self.timestamp.strftime('%Y-%m-%d')}"
