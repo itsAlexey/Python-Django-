@@ -2,101 +2,6 @@ from django.db import models
 
 # Create your models here.
 
-# NetworkDevice
-# ├── id: Integer (PK)
-# ├── name: String
-# ├── device_type: String
-# ├── location: String
-# ├── uptime: Float (время работы устройства в часах (без)# uptime = models.CharField(verbose_name = "Время работы устройства в часах", max_length=50))
-# └── last_reboot_time: DateTime (время последней перезагрузки (без)# last_reboot_time = models.DateField(verbose_name = "Время последней перезагрузки"))
-
-
-class NetworkDevice(models.Model):
-    """Сетевое устройство."""
-    name = models.CharField(verbose_name='Название', max_length=150)
-    device_type = models.CharField(verbose_name='Тип устройства', max_length=50)
-    location = models.CharField(verbose_name='Местонахождение', max_length=150)
-
-    class Meta:
-        verbose_name = 'Сетевое устройство'
-        verbose_name_plural = 'Сетевые устройства'
-        db_table = 'network_device'
-
-    def __str__(self):
-        return self.name
-
-# Interface
-# ├── id: Integer (PK)
-# ├── device: ForeignKey(NetworkDevice)
-# ├── name: String
-# ├── status: String
-# ├── speed: Integer (скорость интерфейса в Мбит/сек)
-# └── duplex_mode: String (режим дуплекса - полный или половинный)
-
-
-class Interface(models.Model):
-    """Интерфейс сетевого устройства."""
-    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
-    name = models.CharField(verbose_name='Название интерфейса', max_length=100)
-    speed = models.IntegerField(verbose_name="Скорость интерфейса в Мбит/сек")
-    status = models.CharField(verbose_name='Статус', max_length=50)
-    duplex_mode = models.TextField(verbose_name="Режим дуплекса - полный или половинный", max_length=50)
-
-    class Meta:
-        verbose_name = 'Интерфейс'
-        verbose_name_plural = 'Интерфейсы'
-        db_table = 'interface'
-
-    def __str__(self):
-        return self.name
-
-# TrafficData
-# ├── id: Integer (PK)
-# ├── interface: ForeignKey(Interface)
-# ├── timestamp: DateTime
-# ├── inbound_traffic: Float
-# ├── outbound_traffic: Float
-# ├── total_packets: Integer (общее количество пакетов)
-# └── error_packets: Integer (количество пакетов с ошибками)
-
-
-class TrafficData(models.Model):
-    interface = models.ForeignKey(Interface, on_delete=models.CASCADE, verbose_name='Интерфейс')
-    timestamp = models.DateTimeField(verbose_name='Время')
-    inbound_traffic = models.FloatField(verbose_name='Входящий трафик')
-    outbound_traffic = models.FloatField(verbose_name='Исходящий трафик')
-    total_packets = models.IntegerField(verbose_name="Общее количество пакетов")
-    error_packets = models.IntegerField(verbose_name="Количество пакетов с ошибками")
-
-    class Meta:
-        verbose_name = 'Данные о трафике'
-        verbose_name_plural = 'Данные о трафиках'
-        db_table = 'traffic_data'
-
-    def __str__(self):
-        return f"{self.interface} - {self.timestamp}"
-
-# ErrorLog
-# ├── id: Integer (PK)
-# ├── device: ForeignKey(NetworkDevice)
-# ├── timestamp: DateTime
-# ├──  error_type: String
-# └── description: Text
-
-
-class ErrorLog(models.Model):
-    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Устройство')
-    timestamp = models.DateTimeField(verbose_name='Время')
-    error_type = models.CharField(max_length=100, verbose_name='Тип ошибки')
-    description = models.TextField(verbose_name='Описание')
-
-    class Meta:
-        verbose_name = 'Журнал ошибок'
-        verbose_name_plural = 'Журналы ошибок'
-        db_table = 'error_log'
-
-    def __str__(self):
-        return f"{self.device} - {self.error_type} - {self.timestamp}"
 
 # UserActivity
 # ├── id: Integer (PK)
@@ -212,7 +117,7 @@ class PerformanceMetrics(models.Model):
 # ├── event_timestamp: DateTime
 # ├── event_type: String
 # └── severity_level: String
-#     └── affected_services: String (затронутые услуги) ------------------------------------------------------
+#     └── affected_services: String (затронутые услуги)
 
 
 class NetworkEvents(models.Model):
@@ -419,8 +324,16 @@ class PacketLossData(models.Model):
 # Также может помочь использование Django shell (python manage.py shell) для выполнения запросов к базе данных и сериализации в интерактивном режиме. Это позволит вам экспериментировать с различными запросами и настройками сериализатора в более контролируемой среде.
 
 # Если проблема всё ещё не решена, предоставьте более подробную информацию о вашем сериализаторе NetworkDeviceSerializer и структуре связанных моделей. Это поможет дать более точные рекомендации.
-        """
-        from django.db import models
+
+
+# NetworkDevice
+# ├── id: Integer (PK)
+# ├── name: String
+# ├── device_type: String
+# ├── location: String
+# ├── interfaceND = ForeignKey(Interface)
+# ├── typeNetDevicesND = ForeignKey(TypeDevices)
+# └── ErrorLogND = ForeignKey(ErrorLog)
 
 class NetworkDevice(models.Model):
     """Сетевое устройство."""
@@ -428,9 +341,9 @@ class NetworkDevice(models.Model):
     device_type = models.CharField(verbose_name='Тип устройства', max_length=50)
     location = models.CharField(verbose_name='Местонахождение', max_length=150)
     
-    interfaceND = models.ForeignKey('Interface', on_delete=models.PROTECT, null=True)
-    typeNetDevicesND = models.ForeignKey('TypeDevices', on_delete=models.PROTECT, null=True)
-    ErrorLogND = models.ForeignKey('ErrorLog', on_delete=models.PROTECT, null=True)
+    interfaceND = models.ForeignKey('Interface', on_delete=models.PROTECT, null=True, verbose_name="Интерфейс")
+    typeNetDevicesND = models.ForeignKey('TypeDevices', on_delete=models.PROTECT, null=True, verbose_name="Тип сетевого устройства")
+    ErrorLogND = models.ForeignKey('ErrorLog', on_delete=models.PROTECT, null=True, verbose_name="Логи ошибок")
     
     class Meta:
         verbose_name = 'Сетевое устройство'
@@ -439,6 +352,14 @@ class NetworkDevice(models.Model):
 
     def __str__(self):
         return f"{self.type} / {self.name}"
+
+# Interface
+# ├── id: Integer (PK)
+# ├── device: ForeignKey(NetworkDevice)
+# ├── name: String
+# ├── status: String
+# ├── speed: Integer (скорость интерфейса в Мбит/сек)
+# └── duplex_mode: String (режим дуплекса - полный или половинный)
 
 class Interface(models.Model):
     """Интерфейс сетевого устройства."""
@@ -457,6 +378,11 @@ class Interface(models.Model):
     def __str__(self):
         return self.name
 
+# TypeDevices
+# ├── type: string
+# ├── serial_number: string
+# └── about: string
+
 class TypeDevices(models.Model):
     type = models.CharField(verbose_name="Тип устройства", max_length=50)
     serial_number = models.CharField(verbose_name="Серийный номер", max_length=50)
@@ -469,6 +395,15 @@ class TypeDevices(models.Model):
 
     def __str__(self):
         return f"{self.type} / {self.serial_number}"
+
+# TrafficData
+# ├── id: Integer (PK)
+# ├── interface: ForeignKey(Interface)
+# ├── timestamp: DateTime
+# ├── inbound_traffic: Float
+# ├── outbound_traffic: Float
+# ├── total_packets: Integer (общее количество пакетов)
+# └── error_packets: Integer (количество пакетов с ошибками)
 
 class TrafficData(models.Model):
     # interface = models.ForeignKey(Interface, on_delete=models.CASCADE, verbose_name='Интерфейс')
@@ -486,6 +421,13 @@ class TrafficData(models.Model):
     def __str__(self):
         return f"{self.interface} - {self.timestamp}"
 
+# ErrorLog
+# ├── id: Integer (PK)
+# ├── device: ForeignKey(NetworkDevice)
+# ├── timestamp: DateTime
+# ├──  error_type: String
+# └── description: Text
+
 class ErrorLog(models.Model):
     timestamp = models.DateTimeField(verbose_name='Время')
     error_type = models.CharField(max_length=100, verbose_name='Тип ошибки')
@@ -499,4 +441,3 @@ class ErrorLog(models.Model):
     def __str__(self):
         return f"{self.device} - {self.error_type} - {self.timestamp}"
 
-        """
