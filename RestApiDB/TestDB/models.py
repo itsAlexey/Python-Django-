@@ -2,202 +2,6 @@ from django.db import models
 
 # Create your models here.
 
-
-# UserActivity
-# ├── id: Integer (PK)
-# ├── user_id: String
-# ├── device: ForeignKey(NetworkDevice)
-# ├── timestamp: DateTime
-# └── activity_type: String
-
-
-class UserActivity(models.Model):
-    user_id = models.CharField(max_length=100, verbose_name='ID пользователя')
-    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Устройство')
-    timestamp = models.DateTimeField(verbose_name='Время')
-    activity_type = models.CharField(max_length=100, verbose_name='Тип активности')
-
-    class Meta:
-        verbose_name = 'Активность пользователя'
-        verbose_name_plural = 'Активности пользователей'
-        db_table = 'user_activity'
-
-    def __str__(self):
-        return f"{self.user_id} - {self.activity_type} - {self.timestamp}"
-
-# DeviceConfiguration
-# ├── id: Integer (PK)
-# ├── device: ForeignKey(NetworkDevice)
-# ├── configuration_timestamp: DateTime
-# └── configuration_details: Text
-
-
-class DeviceConfiguration(models.Model):
-    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Устройство')
-    configuration_timestamp = models.DateTimeField(verbose_name='Время конфигурации')
-    configuration_details = models.TextField(verbose_name='Детали конфигурации')
-
-    class Meta:
-        verbose_name = 'Конфигурация устройства'
-        verbose_name_plural = 'Конфигурации устройств'
-        db_table = 'device_configuration'
-
-    def __str__(self):
-        return f"{self.device} - {self.configuration_timestamp}"
-
-# AuthenticationLog
-# ├── id: Integer (PK)
-# ├── user_id: String
-# ├── device: ForeignKey(NetworkDevice)
-# ├── timestamp: DateTime
-# └── action_type: String
-
-
-class AuthenticationLog(models.Model):
-    user_id = models.CharField(max_length=100, verbose_name='ID пользователя')
-    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Устройство')
-    timestamp = models.DateTimeField(verbose_name='Время')
-    action_type = models.CharField(max_length=100, verbose_name='Тип действия')
-
-    class Meta:
-        verbose_name = 'Журнал аутентификации'
-        verbose_name_plural = 'Журналы аутентификации'
-        db_table = 'authentication_log'
-
-    def __str__(self):
-        return f"{self.user_id} - {self.action_type} - {self.timestamp}"
-
-# PerformanceMetrics
-# ├── id: Integer (PK)
-# ├── device: ForeignKey(NetworkDevice)
-# ├── timestamp: DateTime
-# ├── cpu_usage: Float
-# ├── memory_usage: Float
-# └── storage_usage: Float (использование хранилища)
-
-
-class PerformanceMetrics(models.Model):
-    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Устройство')
-    timestamp = models.DateTimeField(verbose_name='Время')
-    cpu_usage = models.FloatField(verbose_name='Использование ЦПУ')
-    memory_usage = models.FloatField(verbose_name='Использование памяти')
-    storage_ussage = models.FloatField(verbose_name="Использование хранилища")
-
-    class Meta:
-        verbose_name = 'Метрики производительности'
-        verbose_name_plural = 'Метрики производительности'
-        db_table = 'performance_metrics'
-
-    def __str__(self):
-        return f"{self.device} - {self.timestamp}"
-
-# IPAddress
-# ├── id: Integer (PK)
-# ├── device: ForeignKey(NetworkDevice)
-# ├── ip_address: GenericIPAddressField
-# └── is_primary: BooleanField
-
-
-class IPAddress(models.Model):
-    """IP-адрес сетевого устройства."""
-    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
-    ip_address = models.GenericIPAddressField(verbose_name='IP-адрес')
-    is_primary = models.BooleanField(default=False, verbose_name='Основной адрес?')
-
-    class Meta:
-        verbose_name = 'IP-адрес'
-        verbose_name_plural = 'IP-адреса'
-        db_table = 'ip_address'
-
-    def __str__(self):
-        return self.ip_address
-
-# PacketLossData
-# ├── id: Integer (PK)
-# ├── device: ForeignKey(NetworkDevice)
-# ├── timestamp: DateTime
-# └── packet_loss: Float (потеря пакетов)
-
-class PacketLossData(models.Model):
-    """Данные о потере пакетов."""
-    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
-    timestamp = models.DateTimeField(verbose_name='Время')
-    packet_loss = models.FloatField(verbose_name='Потеря пакетов')
-
-    class Meta:
-        verbose_name = 'Потеря пакетов'
-        verbose_name_plural = 'Потеря пакетов'
-        db_table = 'packetlossdata'
-
-    def __str__(self):
-        return f"Потеря пакетов {self.packet_loss} {self.timestamp.strftime('%Y-%m-%d')}"
-
-# Варианты построения графиков
-# 1. "Динамика трафика (входящего/исходящего) по интерфейсам за выбранный период."
-# 2. "Количество ошибок на устройствах за выбранный период."
-# 3. "Активность пользователей по времени суток или дням недели."
-# 4. "Использование пропускной способности интерфейсов в реальном времени."
-# 5. "Изменения в конфигурациях устройств."
-# 6. "Логи аутентификации пользователей (успешные/неуспешные попытки)."
-# 7. "Метрики производительности устройств (CPU, память)."
-# 8. "Распределение типов сетевых событий по уровню серьезности."
-
-
-# ### 1. График использования трафика по network_device.last_reboot_time
-# Используя данные из таблицы TrafficData, можно построить график, показывающий изменение входящего и исходящего трафика во времени для конкретного интерфейса или для всех интерфейсов сетевого устройства.
-# Это поможет определить пики активности и возможные проблемы с пропускной способностью.
-
-# ### 2. График ошибок устройств
-# Из таблицы ErrorLog можно извлечь данные о количестве ошибок, зарегистрированных на различных устройствах, и отобразить их на графике по времени.
-# Это даст представление о стабильности работы устройств и поможет выявить устройства с повышенным уровнем ошибок.
-
-# ### 3. Анализ активности пользователей
-# Данные из таблицы UserActivity могут быть использованы для создания графика, отображающего активность пользователей за определенный период.
-# Это может включать количество активных сессий, типы выполняемых операций и т.д. Такой анализ может помочь в выявлении аномальной активности или планировании ресурсов.
-
-# ### 4. Мониторинг использования полосы пропускания
-# С помощью данных из таблицы BandwidthUsage можно визуализировать использование полосы пропускания интерфейсами сетевых устройств.
-# График может показать, как меняется загрузка канала во времени, что поможет выявить моменты перегрузки и спланировать расширение инфраструктуры.
-
-# ### 5. Изменения конфигурации устройств
-# Из таблицы DeviceConfiguration можно получить информацию об изменениях конфигураций устройств.
-# Визуализация этих данных поможет отслеживать частоту и объем изменений, а также выявить корреляцию между изменениями конфигурации и возникающими проблемами.
-
-# ### 6. Журнал аутентификации
-# Данные из AuthenticationLog могут быть использованы для создания графика, отображающего количество успешных и неудачных попыток аутентификации по времени или пользователям.
-# Это поможет выявить подозрительную активность или проблемы с доступом.
-
-# ### Инструменты для построения графиков
-# Для построения графиков можно использовать различные инструменты и библиотеки, такие как Matplotlib и Seaborn в Python, или интегрированные решения для веб-приложений, например, D3.js или Chart.js.
-# Выбор инструмента зависит от требований к визуализации и платформы, на которой реализовано приложение.
-##############################################################################
-# ### 2. Проверка сериализатора
-
-# Проблема может заключаться в вашем сериализаторе NetworkDeviceSerializer. Убедитесь, что он правильно настроен для работы с множественными объектами.
-
-# - В вашем сериализаторе должен быть корректно настроен Meta класс, а также должны быть правильно определены поля, которые вы хотите сериализовать.
-# - Если у вас есть вложенные сериализаторы (например, для интерфейсов), убедитесь, что они также корректно обрабатывают множественные объекты.
-
-# ### 3. Проверка запроса к базе данных
-
-# Возможно, запрос к базе данных не формируется так, как вы ожидаете. Django ORM очень мощный инструмент, но иногда может быть не совсем очевидно, как он работает под капотом.
-
-# - Используйте print(devices.query) перед сериализацией объектов, чтобы увидеть сформированный SQL-запрос. Это поможет понять, какие данные извлекаются из базы.
-# - Убедитесь, что нет дополнительных фильтров или аннотаций, которые могут изменять результат запроса.
-
-# ### 4. Проверка наличия данных для сериализации
-
-# Убедитесь, что у всех ожидаемых объектов есть данные, которые могут быть сериализованы. Если какие-то данные отсутствуют или не соответствуют ожиданиям сериализатора, это может привести к тому, что некоторые объекты будут пропущены.
-
-# ### Решение
-
-# Если после проверки вышеуказанных пунктов проблема остаётся, попробуйте упростить запрос до минимума и постепенно добавлять сложность (например, начните с сериализации только основных полей модели NetworkDevice, без вложенных объектов). Это поможет локализовать проблему.
-
-# Также может помочь использование Django shell (python manage.py shell) для выполнения запросов к базе данных и сериализации в интерактивном режиме. Это позволит вам экспериментировать с различными запросами и настройками сериализатора в более контролируемой среде.
-
-# Если проблема всё ещё не решена, предоставьте более подробную информацию о вашем сериализаторе NetworkDeviceSerializer и структуре связанных моделей. Это поможет дать более точные рекомендации.
-
-
 # NetworkDevice
 # ├── id: Integer (PK)
 # ├── name: String
@@ -206,13 +10,14 @@ class PacketLossData(models.Model):
 # ├── interfaceND: ForeignKey(Interface)
 # ├── typeNetDevicesND: ForeignKey(TypeDevices)
 # ├── networkDeviceTemperature: ForeignKey(NetworkDeviceTemperature)
+# ├── DeviceConfiguration: ForeignKey(DeviceConfiguration)
+# ├── PerformanceMetrics: ForeignKey(PerformanceMetrics)
 
 # ├── networkEventsInterface: ForeignKey(NetworkEvents)
 # └── ErrorLogND: ForeignKey(ErrorLog)
 
 class NetworkDevice(models.Model):
     """Сетевое устройство."""
-    name = models.CharField(verbose_name='Название', max_length=150)
     device_type = models.CharField(verbose_name='Тип устройства', max_length=50)
     location = models.CharField(verbose_name='Местонахождение', max_length=150)
     
@@ -221,17 +26,10 @@ class NetworkDevice(models.Model):
     networkEventsInterface = models.ForeignKey('NetworkEvents', on_delete=models.PROTECT, null=True, verbose_name="Сетевые события")
     networkDeviceTemperature = models.ForeignKey('NetworkDeviceTemperature', on_delete=models.PROTECTED, null=True, verbose_name="Температура устрйоства")
     PowerConsumption = models.ForeignKey('PowerConsumption', on_delete=models.PROTECTED, null=True, verbose_name="Потребление энергии")
-    = models.ForeignKey('', on_delete=models.PROTECTED, null=True, verbose_name="")
-    = models.ForeignKey('', on_delete=models.PROTECTED, null=True, verbose_name="")
-    = models.ForeignKey('', on_delete=models.PROTECTED, null=True, verbose_name="")
-    = models.ForeignKey('', on_delete=models.PROTECTED, null=True, verbose_name="")
-    = models.ForeignKey('', on_delete=models.PROTECTED, null=True, verbose_name="")
-    = models.ForeignKey('', on_delete=models.PROTECTED, null=True, verbose_name="")
-    = models.ForeignKey('', on_delete=models.PROTECTED, null=True, verbose_name="")
-    = models.ForeignKey('', on_delete=models.PROTECTED, null=True, verbose_name="")
-    = models.ForeignKey('', on_delete=models.PROTECTED, null=True, verbose_name="")
-    = models.ForeignKey('', on_delete=models.PROTECTED, null=True, verbose_name="")
-    
+    DeviceConfiguration= models.ForeignKey('DeviceConfiguration', on_delete=models.PROTECTED, null=True, verbose_name="Конфигурация устройств")
+    PerformanceMetrics= models.ForeignKey('PerformanceMetrics', on_delete=models.PROTECTED, null=True, verbose_name="Метрики производительности")
+    networkIPAddress= models.ForeignKey('IPAddress', on_delete=models.PROTECTED, null=True, verbose_name="IP адрес")
+    networkPacketLossData= models.ForeignKey('PacketLossData', on_delete=models.PROTECTED, null=True, verbose_name="Потери пакетов")
     
     class Meta:
         verbose_name = 'Сетевое устройство'
@@ -276,7 +74,8 @@ class Interface(models.Model):
 
 class TypeDevices(models.Model):
     """Тип устройства"""
-    type = models.CharField(verbose_name="Тип устройства", max_length=50)
+    name = models.CharField(verbose_name='Название', max_length=150)
+    typeDevice = models.CharField(verbose_name="Тип устройства", max_length=50)
     serial_number = models.CharField(verbose_name="Серийный номер", max_length=50)
     about = models.CharField(verbose_name="Об устройстве", max_length=200, blank=True)
     
@@ -385,3 +184,242 @@ class PowerConsumption(models.Model):
 
     def __str__(self):
         return f"Расход энергии {self.power_consumption} {self.timestamp.strftime('%Y-%m-%d')}"
+
+# DeviceConfiguration
+# ├── id: Integer (PK)
+# ├── configuration_timestamp: DateTime
+# └── configuration_details: Text
+
+class DeviceConfiguration(models.Model):
+    """Конфигурация устройств"""
+    configuration_timestamp = models.DateTimeField(verbose_name='Время конфигурации')
+    configuration_details = models.TextField(verbose_name='Детали конфигурации')
+
+    class Meta:
+        verbose_name = 'Конфигурация устройства'
+        verbose_name_plural = 'Конфигурации устройств'
+        db_table = 'device_configuration'
+
+    def __str__(self):
+        return f"{self.device} - {self.configuration_timestamp}"
+
+# PerformanceMetrics
+# ├── id: Integer (PK)
+# ├── timestamp: DateTime
+# ├── cpu_usage: Float
+# ├── memory_usage: Float
+# └── storage_usage: Float (использование хранилища)
+
+class PerformanceMetrics(models.Model):
+    """Метрики производительности"""
+    timestamp = models.DateTimeField(verbose_name='Время')
+    cpu_usage = models.FloatField(verbose_name='Использование ЦПУ')
+    memory_usage = models.FloatField(verbose_name='Использование памяти')
+    storage_ussage = models.FloatField(verbose_name="Использование хранилища")
+
+    class Meta:
+        verbose_name = 'Метрики производительности'
+        verbose_name_plural = 'Метрики производительности'
+        db_table = 'performance_metrics'
+
+    def __str__(self):
+        return f"{self.device} - {self.timestamp}"
+
+# IPAddress
+# ├── id: Integer (PK)
+# ├── ip_address: GenericIPAddressField
+# └── is_primary: BooleanField
+
+class IPAddress(models.Model):
+    """IP-адрес сетевого устройства."""
+    ip_address = models.GenericIPAddressField(verbose_name='IP-адрес')
+    is_primary = models.BooleanField(default=False, verbose_name='Основной адрес?')
+
+    class Meta:
+        verbose_name = 'IP-адрес'
+        verbose_name_plural = 'IP-адреса'
+        db_table = 'ip_address'
+
+    def __str__(self):
+        return self.ip_address
+
+# PacketLossData
+# ├── id: Integer (PK)
+# ├── timestamp: DateTime
+# └── packet_loss: Float (потеря пакетов)
+
+class PacketLossData(models.Model):
+    """Данные о потере пакетов."""
+    timestamp = models.DateTimeField(verbose_name='Время')
+    packet_loss = models.FloatField(verbose_name='Потеря пакетов')
+
+    class Meta:
+        verbose_name = 'Потеря пакетов'
+        verbose_name_plural = 'Потеря пакетов'
+        db_table = 'packetlossdata'
+
+    def __str__(self):
+        return f"Потеря пакетов {self.packet_loss} {self.timestamp.strftime('%Y-%m-%d')}"
+
+# HostDevice 
+# ├── id: Integer (PK)
+# ├── typeNetDevicesHost: ForeignKey(TypeDevices)
+# ├── location: String
+# ├── IPAddressHost: ForeignKey(IPAddress)
+# ├── packetLossHost: ForeignKey(PacketLossData)
+# ├── mac_address: string
+# └── active: boolean
+
+class HostDevice(models.Model):
+    """Хост-устройства"""
+    location = models.CharField(verbose_name='Местонахождение', max_length=150)
+    typeHosttDevices =  models.ForeignKey('TypeDevices', on_delete=models.PROTECT, null=True, verbose_name="Тип устройства")
+    ipAddresshost =  models.ForeignKey('IPAdress', on_delete=models.PROTECT, null=True, verbose_name="IP адрес")
+    packetLossHost =  models.ForeignKey('PacketLossData', on_delete=models.PROTECT, null=True, verbose_name="Потеря пакетов")
+    mac_address = models.CharField(verbose_name='Mac адрес', max_length=12)
+    active = models.BooleanField(default=False, verbose_name="Используется?")
+    
+    typeDevices = models.ForeignKey("TypeDevices", verbose_name="Устройство", on_delete=models.CASCADE)
+    
+    class Meta:
+        verbose_name = 'Хост-устройства'
+        verbose_name_plural = 'Хост-устройства'
+        db_table = 'hostdevice'
+
+    def __str__(self):
+        return f"{self.typeDevices.name} {self.typeDevices.typeDevice}"
+
+# UserActivity
+# ├── id: Integer (PK)
+# ├── name: String
+# ├── device: ForeignKey(NetworkDevice)
+# ├── username: ForeignKey(User)
+# ├── timestamp: DateTime
+# └── activity_type: String
+
+class UserActivity(models.Model):
+    user_id = models.CharField(max_length=100, verbose_name='ID пользователя')
+    username =  models.ForeignKey('User', on_delete=models.PROTECT, null=True, verbose_name="Пользователь")
+    device = models.ForeignKey("NetworkDevice", on_delete=models.CASCADE, verbose_name='Устройство')
+    timestamp = models.DateTimeField(verbose_name='Время')
+    activity_type = models.CharField(max_length=100, verbose_name='Тип активности')
+
+    class Meta:
+        verbose_name = 'Активность пользователя'
+        verbose_name_plural = 'Активности пользователей'
+        db_table = 'user_activity'
+
+    def __str__(self):
+        return f"{self.user_id} - {self.activity_type} - {self.timestamp}"
+
+# User
+# ├── id: Integer (PK)
+# ├── user_name: String
+# ├── timestamp: DateTime
+# └── activity_type: String
+
+class UserActivity(models.Model):
+    user_name = models.CharField(max_length=100, verbose_name='Имя')
+    user_name = models.CharField(max_length=100, verbose_name='Отчество ')
+    user_name = models.CharField(max_length=100, verbose_name='Фамилия')
+    user_name = models.CharField(max_length=100, verbose_name='ID пользователя')
+    ipAddresshost =  models.ForeignKey('IPAdress', on_delete=models.PROTECT, null=True, verbose_name="IP адрес")
+    timestamp = models.DateTimeField(verbose_name='Время')
+    activity_type = models.CharField(max_length=100, verbose_name='Тип активности')
+
+    class Meta:
+        verbose_name = 'Активность пользователя'
+        verbose_name_plural = 'Активности пользователей'
+        db_table = 'user_activity'
+
+    def __str__(self):
+        return f"{self.user_id} - {self.activity_type} - {self.timestamp}"
+
+# AuthenticationLog
+# ├── id: Integer (PK)
+# ├── user_id: ForeignKey(Users)
+# ├── device: ForeignKey(NetworkDevice)
+# ├── timestamp: DateTime
+# └── action_type: String
+
+class AuthenticationLog(models.Model):
+    user_id = models.ForeignKey("User", on_delete=models.CASCADE, verbose_name='Пользователь')
+    device = models.ForeignKey("NetworkDevice", on_delete=models.CASCADE, verbose_name='Устройство')
+    timestamp = models.DateTimeField(verbose_name='Время')
+    action_type = models.CharField(max_length=100, verbose_name='Тип действия')
+
+    class Meta:
+        verbose_name = 'Журнал аутентификации'
+        verbose_name_plural = 'Журналы аутентификации'
+        db_table = 'authentication_log'
+
+    def __str__(self):
+        return f"{self.user_id} {self.action_type} {self.timestamp}"
+
+
+
+# Варианты построения графиков
+# 1. "Динамика трафика (входящего/исходящего) по интерфейсам за выбранный период."
+# 2. "Количество ошибок на устройствах за выбранный период."
+# 3. "Активность пользователей по времени суток или дням недели."
+# 4. "Использование пропускной способности интерфейсов в реальном времени."
+# 5. "Изменения в конфигурациях устройств."
+# 6. "Логи аутентификации пользователей (успешные/неуспешные попытки)."
+# 7. "Метрики производительности устройств (CPU, память)."
+# 8. "Распределение типов сетевых событий по уровню серьезности."
+
+
+# ### 1. График использования трафика по network_device.last_reboot_time
+# Используя данные из таблицы TrafficData, можно построить график, показывающий изменение входящего и исходящего трафика во времени для конкретного интерфейса или для всех интерфейсов сетевого устройства.
+# Это поможет определить пики активности и возможные проблемы с пропускной способностью.
+
+# ### 2. График ошибок устройств
+# Из таблицы ErrorLog можно извлечь данные о количестве ошибок, зарегистрированных на различных устройствах, и отобразить их на графике по времени.
+# Это даст представление о стабильности работы устройств и поможет выявить устройства с повышенным уровнем ошибок.
+
+# ### 3. Анализ активности пользователей
+# Данные из таблицы UserActivity могут быть использованы для создания графика, отображающего активность пользователей за определенный период.
+# Это может включать количество активных сессий, типы выполняемых операций и т.д. Такой анализ может помочь в выявлении аномальной активности или планировании ресурсов.
+
+# ### 4. Мониторинг использования полосы пропускания
+# С помощью данных из таблицы BandwidthUsage можно визуализировать использование полосы пропускания интерфейсами сетевых устройств.
+# График может показать, как меняется загрузка канала во времени, что поможет выявить моменты перегрузки и спланировать расширение инфраструктуры.
+
+# ### 5. Изменения конфигурации устройств
+# Из таблицы DeviceConfiguration можно получить информацию об изменениях конфигураций устройств.
+# Визуализация этих данных поможет отслеживать частоту и объем изменений, а также выявить корреляцию между изменениями конфигурации и возникающими проблемами.
+
+# ### 6. Журнал аутентификации
+# Данные из AuthenticationLog могут быть использованы для создания графика, отображающего количество успешных и неудачных попыток аутентификации по времени или пользователям.
+# Это поможет выявить подозрительную активность или проблемы с доступом.
+
+# ### Инструменты для построения графиков
+# Для построения графиков можно использовать различные инструменты и библиотеки, такие как Matplotlib и Seaborn в Python, или интегрированные решения для веб-приложений, например, D3.js или Chart.js.
+# Выбор инструмента зависит от требований к визуализации и платформы, на которой реализовано приложение.
+##############################################################################
+# ### 2. Проверка сериализатора
+
+# Проблема может заключаться в вашем сериализаторе NetworkDeviceSerializer. Убедитесь, что он правильно настроен для работы с множественными объектами.
+
+# - В вашем сериализаторе должен быть корректно настроен Meta класс, а также должны быть правильно определены поля, которые вы хотите сериализовать.
+# - Если у вас есть вложенные сериализаторы (например, для интерфейсов), убедитесь, что они также корректно обрабатывают множественные объекты.
+
+# ### 3. Проверка запроса к базе данных
+
+# Возможно, запрос к базе данных не формируется так, как вы ожидаете. Django ORM очень мощный инструмент, но иногда может быть не совсем очевидно, как он работает под капотом.
+
+# - Используйте print(devices.query) перед сериализацией объектов, чтобы увидеть сформированный SQL-запрос. Это поможет понять, какие данные извлекаются из базы.
+# - Убедитесь, что нет дополнительных фильтров или аннотаций, которые могут изменять результат запроса.
+
+# ### 4. Проверка наличия данных для сериализации
+
+# Убедитесь, что у всех ожидаемых объектов есть данные, которые могут быть сериализованы. Если какие-то данные отсутствуют или не соответствуют ожиданиям сериализатора, это может привести к тому, что некоторые объекты будут пропущены.
+
+# ### Решение
+
+# Если после проверки вышеуказанных пунктов проблема остаётся, попробуйте упростить запрос до минимума и постепенно добавлять сложность (например, начните с сериализации только основных полей модели NetworkDevice, без вложенных объектов). Это поможет локализовать проблему.
+
+# Также может помочь использование Django shell (python manage.py shell) для выполнения запросов к базе данных и сериализации в интерактивном режиме. Это позволит вам экспериментировать с различными запросами и настройками сериализатора в более контролируемой среде.
+
+# Если проблема всё ещё не решена, предоставьте более подробную информацию о вашем сериализаторе NetworkDeviceSerializer и структуре связанных моделей. Это поможет дать более точные рекомендации.
+
