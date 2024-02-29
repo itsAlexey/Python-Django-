@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 
-from .models import NetworkDevice, Interface, TrafficData, ErrorLog##, 
+from .models import NetworkDevice, Interface, TrafficData#, ErrorLog##, 
 # UserActivity,\
 #     BandwidthUsage, DeviceConfiguration, AuthenticationLog, PerformanceMetrics, \
 #     NetworkEvents, IPAddress, Configuration \
@@ -51,10 +51,10 @@ class TrafficDataSerializer(ModelSerializer):
 #         model = Configuration
 #         fields = '__all__'
 
-class ErrorLogSerializer(ModelSerializer):
-    class Meta:
-        model = ErrorLog
-        fields = '__all__'
+# class ErrorLogSerializer(ModelSerializer):
+#     class Meta:
+#         model = ErrorLog
+#         fields = '__all__'
 
 # class DeviceTemperatureSerializer(ModelSerializer):
 #     class Meta:
@@ -80,7 +80,7 @@ class InterfaceSerializer(ModelSerializer):
 class NetworkDeviceSerializer(ModelSerializer):
     #AuthenticationLog, PerformanceMetrics, NetworkEvents, IPAddress, Configuration
     interfaces = InterfaceSerializer(many=True, read_only=True, source='interface_set')
-    error_logs = ErrorLogSerializer(many=True, read_only=True, source='errorlog_set')
+    # error_logs = ErrorLogSerializer(many=True, read_only=True, source='errorlog_set')
     # user_activities = UserActivitySerializer(many=True, read_only=True, source='useractivity_set')
     # device_configurations = DeviceConfigurationSerializer(many=True, read_only=True, source='deviceconfiguration_set')
     # bandwidth_usage = BandwidthUsageSerializer(many=True, read_only=True, source='bandwidthusage_set')
