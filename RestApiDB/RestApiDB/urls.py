@@ -25,7 +25,6 @@ from TestDB.views import NetworkDeviceView
 router = SimpleRouter()
 
 router.register('api/networkdevices', NetworkDeviceView)
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('network-devices/', NetworkDeviceListView.as_view(), name='network-device-list'),
