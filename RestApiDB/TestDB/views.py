@@ -4,8 +4,8 @@ from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
 
-from TestDB.models import NetworkDevice
-from TestDB.serializers import NetworkDeviceSerializer
+from TestDB.models import NetworkDevice, TypeDevices
+from TestDB.serializers import NetworkDeviceSerializer, TypeDevicesSerializer
 
 # Create your views here.
 

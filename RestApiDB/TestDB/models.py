@@ -20,7 +20,7 @@ class TypeDevices(models.Model):
         db_table = 'typedevice'
 
     def __str__(self):
-        return f"{self.type} / {self.serial_number}"
+        return f"{self.name} / {self.serial_number}"
 
 # HostDevice 
 # ├── id: Integer (PK)
@@ -47,7 +47,7 @@ class HostDevice(models.Model):
         db_table = 'hostdevice'
 
     def __str__(self):
-        return f"{self.typeDevices.name} {self.typeDevices.typeDevice}"
+        return f"{self.typeHostDevices.typeDevice} {self.typeHostDevices.name}"
 
 # NetworkDevice
 # ├── id: Integer (PK)
@@ -68,7 +68,7 @@ class NetworkDevice(models.Model):
     device_type = models.CharField(verbose_name='Тип устройства', max_length=50)
     location = models.CharField(verbose_name='Местонахождение', max_length=150)
 
-    type_networkDevice =  models.ForeignKey('TypeDevices', on_delete=models.CASCADE, null=True, verbose_name="Тип устройства")
+    typeNetworkDevice =  models.ForeignKey(TypeDevices, on_delete=models.CASCADE, null=True, verbose_name="Тип устройства")
     
     # interfaceND = models.ForeignKey('Interface', on_delete=models.PROTECT, null=True, verbose_name="Интерфейс")
     # typeNetDevicesND = models.ForeignKey('TypeDevices', on_delete=models.PROTECT, null=True, verbose_name="Тип сетевого устройства")
@@ -86,7 +86,7 @@ class NetworkDevice(models.Model):
         db_table = 'network_device'
 
     def __str__(self):
-        return f"{self.type} / {self.name}"
+        return f"{self.device_type}"
 
 # Interface
 # ├── id: Integer (PK)
