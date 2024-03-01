@@ -14,6 +14,9 @@ class TypeDevices(models.Model):
     serial_number = models.CharField(verbose_name="Серийный номер", max_length=50)
     about = models.CharField(verbose_name="Об устройстве", max_length=200, blank=True)
     
+    # device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
+    # hostDev = models.ForeignKey("HostDevice", on_delete=models.CASCADE, verbose_name='Хост устройство')
+    
     class Meta:
         verbose_name = 'Тип устройства'
         verbose_name_plural = 'Тип устройства'
@@ -348,12 +351,12 @@ class UserActivity(models.Model):
     device_userActivity = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name='Устройство')
 
     class Meta:
-        verbose_name = 'Активность пользователя'
-        verbose_name_plural = 'Активности пользователей'
-        db_table = 'user_activity'
+        verbose_name = 'Пользователи'
+        verbose_name_plural = 'Пользователи'
+        db_table = 'user'
 
     def __str__(self):
-        return f"{self.user_id} - {self.activity_type} - {self.timestamp}"
+        return f"{self.user_surname} - {self.user_name} - {self.user_id}"
 
 # AuthenticationLog
 # ├── user_id: ForeignKey(Users)
@@ -376,7 +379,6 @@ class AuthenticationLog(models.Model):
 
     def __str__(self):
         return f"{self.user_id} {self.action_type} {self.timestamp}"
-
 
 
 # Варианты построения графиков
