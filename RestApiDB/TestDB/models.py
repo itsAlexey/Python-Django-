@@ -2,6 +2,74 @@ from django.db import models
 
 # Create your models here.
 
+# NetworkDevice
+
+# ├── id: Integer (PK)
+# ├── name: String
+# ├── device_type: String
+# ├── location: String
+# ├── interfaceND: ForeignKey(Interface)
+# ├── typeNetDevicesND: ForeignKey(TypeDevices)
+# ├── networkDeviceTemperature: ForeignKey(NetworkDeviceTemperature)
+# ├── DeviceConfiguration: ForeignKey(DeviceConfiguration)
+# ├── PerformanceMetrics: ForeignKey(PerformanceMetrics)
+
+# ├── networkEventsInterface: ForeignKey(NetworkEvents)
+# └── ErrorLogND: ForeignKey(ErrorLog)
+
+class NetworkDevice(models.Model):
+    """Сетевое устройство."""
+    device_type = models.CharField(verbose_name='Тип устройства', max_length=50)
+    location = models.CharField(verbose_name='Местонахождение', max_length=150)
+    
+    interfaceND = models.ForeignKey('Interface', on_delete=models.CASCADE, null=True, verbose_name="Интерфейс", blank=True)
+    typeNetDevicesND = models.ForeignKey('TypeDevices', on_delete=models.CASCADE, null=True, verbose_name="Тип сетевого устройства", blank=True)
+    networkEventsInterfaceND = models.ForeignKey('NetworkEvents', on_delete=models.CASCADE, null=True, verbose_name="Сетевые события", blank=True)
+    networkDeviceTemperatureND = models.ForeignKey('DeviceTemperature', on_delete=models.CASCADE, null=True, verbose_name="Температура устрйоства", blank=True)
+    PowerConsumptionND = models.ForeignKey('PowerConsumption', on_delete=models.CASCADE, null=True, verbose_name="Потребление энергии", blank=True)
+    DeviceConfigurationND= models.ForeignKey('DeviceConfiguration', on_delete=models.CASCADE, null=True, verbose_name="Конфигурация устройств", blank=True)
+    PerformanceMetricsND= models.ForeignKey('PerformanceMetrics', on_delete=models.CASCADE, null=True, verbose_name="Метрики производительности", blank=True)
+    networkIPAddressND= models.ForeignKey('IPAddress', on_delete=models.CASCADE, null=True, verbose_name="IP адрес", blank=True)
+    networkPacketLossDataND= models.ForeignKey('PacketLossData', on_delete=models.CASCADE, null=True, verbose_name="Потери пакетов", blank=True)
+    
+    class Meta:
+        verbose_name = 'Сетевое устройство'
+        verbose_name_plural = 'Сетевые устройства'
+        db_table = 'network_device'
+
+    def __str__(self):
+        return f"{self.type} / {self.name}"
+
+# Interface
+# ├── id: Integer (PK)
+# ├── device: ForeignKey(NetworkDevice)
+# ├── name: String
+# ├── status: String
+# ├── speed: Integer (скорость интерфейса в Мбит/сек)
+# ├── trafficDataInterface: ForeignKey(TrafficData)
+# ├── trafficDataInterface: ForeignKey(BandwidthUsage)
+# └── duplex_mode: String (режим дуплекса - полный или половинный)
+
+class Interface(models.Model):
+    """Интерфейс сетевого устройства."""
+    name = models.CharField(verbose_name='Название интерфейса', max_length=100)
+    speed = models.FloatField(verbose_name="Скорость интерфейса в Мбит/сек")
+    status = models.CharField(verbose_name='Статус', max_length=50)
+    duplex_mode = models.TextField(verbose_name="Режим дуплекса - полный или половинный", max_length=50)
+
+    # device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
+    # trafficDataInterface = models.ForeignKey('TrafficData', on_delete=models.CASCADE, null=True, verbose_name="Данные о трафике")
+    # bandwidthUsageInterface = models.ForeignKey('BandwidthUsage', on_delete=models.CASCADE, null=True, verbose_name="Использ
+    # ование полосы пропускания")
+
+    class Meta:
+        verbose_name = 'Интерфейс'
+        verbose_name_plural = 'Интерфейсы'
+        db_table = 'interface'
+
+    def __str__(self):
+        return self.name
+
 # TypeDevices
 # ├── type: string
 # ├── serial_number: string
@@ -23,103 +91,7 @@ class TypeDevices(models.Model):
         db_table = 'typedevice'
 
     def __str__(self):
-        return f"{self.name} / {self.serial_number}"
-
-# HostDevice 
-# ├── id: Integer (PK)
-# ├── typeNetDevicesHost: ForeignKey(TypeDevices)
-# ├── location: String
-# ├── IPAddressHost: ForeignKey(IPAddress)
-# ├── packetLossHost: ForeignKey(PacketLossData)
-# ├── mac_address: string
-# └── active: boolean
-
-class HostDevice(models.Model):
-    """Хост-устройства"""
-    location = models.CharField(verbose_name='Местонахождение', max_length=150)
-    mac_address = models.CharField(verbose_name='Mac адрес', max_length=12)
-    active = models.BooleanField(default=False, verbose_name="Используется?")
-    
-    typeHostDevices =  models.ForeignKey(TypeDevices, on_delete=models.CASCADE, null=True, verbose_name="Тип устройства")
-    # ipAddresshost =  models.ForeignKey('IPAdress', on_delete=models.CASCADE, null=True, verbose_name="IP адрес")
-    # packetLossHost =  models.ForeignKey('PacketLossData', on_delete=models.CASCADE, null=True, verbose_name="Потеря пакетов")
-    
-    class Meta:
-        verbose_name = 'Хост-устройства'
-        verbose_name_plural = 'Хост-устройства'
-        db_table = 'hostdevice'
-
-    def __str__(self):
-        return f"{self.typeHostDevices.typeDevice} {self.typeHostDevices.name}"
-
-# NetworkDevice
-# ├── id: Integer (PK)
-# ├── name: String
-# ├── device_type: String
-# ├── location: String
-# ├── interfaceND: ForeignKey(Interface)
-# ├── typeNetDevicesND: ForeignKey(TypeDevices)
-# ├── networkDeviceTemperature: ForeignKey(NetworkDeviceTemperature)
-# ├── DeviceConfiguration: ForeignKey(DeviceConfiguration)
-# ├── PerformanceMetrics: ForeignKey(PerformanceMetrics)
-
-# ├── networkEventsInterface: ForeignKey(NetworkEvents)
-# └── ErrorLogND: ForeignKey(ErrorLog)
-
-class NetworkDevice(models.Model):
-    """Сетевое устройство."""
-    device_type = models.CharField(verbose_name='Тип устройства', max_length=50)
-    location = models.CharField(verbose_name='Местонахождение', max_length=150)
-
-    typeNetworkDevice =  models.ForeignKey(TypeDevices, on_delete=models.CASCADE, null=True, verbose_name="Тип устройства")
-    
-    # interfaceND = models.ForeignKey('Interface', on_delete=models.PROTECT, null=True, verbose_name="Интерфейс")
-    # typeNetDevicesND = models.ForeignKey('TypeDevices', on_delete=models.PROTECT, null=True, verbose_name="Тип сетевого устройства")
-    # networkEventsInterface = models.ForeignKey('NetworkEvents', on_delete=models.PROTECT, null=True, verbose_name="Сетевые события")
-    # networkDeviceTemperature = models.ForeignKey('NetworkDeviceTemperature', on_delete=models.PROTECTED, null=True, verbose_name="Температура устрйоства")
-    # PowerConsumption = models.ForeignKey('PowerConsumption', on_delete=models.PROTECTED, null=True, verbose_name="Потребление энергии")
-    # DeviceConfiguration= models.ForeignKey('DeviceConfiguration', on_delete=models.PROTECTED, null=True, verbose_name="Конфигурация устройств")
-    # PerformanceMetrics= models.ForeignKey('PerformanceMetrics', on_delete=models.PROTECTED, null=True, verbose_name="Метрики производительности")
-    # networkIPAddress= models.ForeignKey('IPAddress', on_delete=models.PROTECTED, null=True, verbose_name="IP адрес")
-    # networkPacketLossData= models.ForeignKey('PacketLossData', on_delete=models.PROTECTED, null=True, verbose_name="Потери пакетов")
-    
-    class Meta:
-        verbose_name = 'Сетевое устройство'
-        verbose_name_plural = 'Сетевые устройства'
-        db_table = 'network_device'
-
-    def __str__(self):
-        return f"{self.device_type}"
-
-# Interface
-# ├── id: Integer (PK)
-# ├── device: ForeignKey(NetworkDevice)
-# ├── name: String
-# ├── status: String
-# ├── speed: Integer (скорость интерфейса в Мбит/сек)
-# ├── trafficDataInterface: ForeignKey(TrafficData)
-# ├── trafficDataInterface: ForeignKey(BandwidthUsage)
-# └── duplex_mode: String (режим дуплекса - полный или половинный)
-
-class Interface(models.Model):
-    """Интерфейс сетевого устройства."""
-    name = models.CharField(verbose_name='Название интерфейса', max_length=100)
-    speed = models.FloatField(verbose_name="Скорость интерфейса в Мбит/сек")
-    status = models.CharField(verbose_name='Статус', max_length=50)
-    duplex_mode = models.TextField(verbose_name="Режим дуплекса - полный или половинный", max_length=50)
-    
-    device_interface = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
-
-    # trafficDataInterface = models.ForeignKey('TrafficData', on_delete=models.PROTECT, null=True, verbose_name="Данные о трафике")
-    # bandwidthUsageInterface = models.ForeignKey('BandwidthUsage', on_delete=models.PROTECT, null=True, verbose_name="Использование полосы пропускания")
-
-    class Meta:
-        verbose_name = 'Интерфейс'
-        verbose_name_plural = 'Интерфейсы'
-        db_table = 'interface'
-
-    def __str__(self):
-        return self.name
+        return f"{self.type} / {self.serial_number}"
 
 # TrafficData
 # ├── id: Integer (PK)
@@ -137,7 +109,7 @@ class TrafficData(models.Model):
     total_packets = models.FloatField(verbose_name="Общее количество пакетов")
     error_packets = models.FloatField(verbose_name="Количество пакетов с ошибками")
 
-    interfaces_trafficData = models.ForeignKey(Interface, on_delete=models.CASCADE, verbose_name="Интерфейсы")
+    interface = models.ForeignKey(Interface, on_delete=models.CASCADE, verbose_name='Интерфейс')
 
     class Meta:
         verbose_name = 'Данные о трафике'
@@ -157,7 +129,7 @@ class BandwidthUsage(models.Model):
     timestamp = models.DateTimeField(verbose_name='Время')
     bandwidth_usage = models.FloatField(verbose_name='Использование полосы пропускания')
 
-    interfaces_bandwidthUsage = models.ForeignKey(Interface, on_delete=models.CASCADE, verbose_name="Интерфейсы")
+    interface = models.ForeignKey(Interface, on_delete=models.CASCADE, verbose_name='Интерфейс')
 
     class Meta:
         verbose_name = 'Использование полосы пропускания'
@@ -179,7 +151,7 @@ class NetworkEvents(models.Model):
     event_type = models.CharField(max_length=100, verbose_name='Тип события')
     severity_level = models.CharField(max_length=100, verbose_name='Уровень серьезности')
 
-    device_networkEvents = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
+    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
 
     class Meta:
         verbose_name = 'Сетевое событие'
@@ -199,12 +171,12 @@ class DeviceTemperature(models.Model):
     timestamp = models.DateTimeField(verbose_name='Время')
     temperature = models.FloatField(verbose_name='Температура устройства')
 
-    device_deviceTemperature = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
+    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
 
     class Meta:
         verbose_name = 'Температура устройства'
         verbose_name_plural = 'Температура устройства'
-        db_table = 'device_temperature'
+        db_table = 'devicetemperature'
 
     def __str__(self):
         return f"Температура {self.temperature} {self.timestamp.strftime('%Y-%m-%d')}"
@@ -219,12 +191,12 @@ class PowerConsumption(models.Model):
     timestamp = models.DateTimeField(verbose_name='Время')
     power_consumption = models.FloatField(verbose_name='Потребление энергии')
 
-    device_powerConsumption = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
+    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
 
     class Meta:
         verbose_name = 'Потребление энергии'
         verbose_name_plural = 'Потребление энергии'
-        db_table = 'рower_сonsumption'
+        db_table = 'рowerсonsumption'
 
     def __str__(self):
         return f"Расход энергии {self.power_consumption} {self.timestamp.strftime('%Y-%m-%d')}"
@@ -239,7 +211,7 @@ class DeviceConfiguration(models.Model):
     configuration_timestamp = models.DateTimeField(verbose_name='Время конфигурации')
     configuration_details = models.TextField(verbose_name='Детали конфигурации')
 
-    device_deviceConfiguration = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
+    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
 
     class Meta:
         verbose_name = 'Конфигурация устройства'
@@ -263,7 +235,7 @@ class PerformanceMetrics(models.Model):
     memory_usage = models.FloatField(verbose_name='Использование памяти')
     storage_ussage = models.FloatField(verbose_name="Использование хранилища")
 
-    device_performanceMetrics = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
+    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
 
     class Meta:
         verbose_name = 'Метрики производительности'
@@ -283,8 +255,8 @@ class IPAddress(models.Model):
     ip_address = models.GenericIPAddressField(verbose_name='IP-адрес')
     is_primary = models.BooleanField(default=False, verbose_name='Основной адрес?')
 
-    device_IPAddress = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
-    hostdevice_IPAddress = models.ForeignKey(HostDevice, on_delete=models.CASCADE, verbose_name="Хост устройство")
+    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
+    hostDev = models.ForeignKey("HostDevice", on_delete=models.CASCADE, verbose_name='Хост устройство')
 
     class Meta:
         verbose_name = 'IP-адрес'
@@ -295,9 +267,8 @@ class IPAddress(models.Model):
         return self.ip_address
 
 # PacketLossData
-# ├── hostaName_loss: ForeignKey(NetworkDevice)
+# ├── id: Integer (PK)
 # ├── timestamp: DateTime
-# ├── packet_loss: ForeignKey(HostDevice)
 # └── packet_loss: Float (потеря пакетов)
 
 class PacketLossData(models.Model):
@@ -305,50 +276,86 @@ class PacketLossData(models.Model):
     timestamp = models.DateTimeField(verbose_name='Время')
     packet_loss = models.FloatField(verbose_name='Потеря пакетов')
 
-    device_packetLossData = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
-    hostdevice_packetLossData = models.ForeignKey(HostDevice, on_delete=models.CASCADE, verbose_name="Хост устройство")
+    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Сетевое устройство')
+    hostDev = models.ForeignKey("HostDevice", on_delete=models.CASCADE, verbose_name='Хост устройство')
 
     class Meta:
         verbose_name = 'Потеря пакетов'
         verbose_name_plural = 'Потеря пакетов'
-        db_table = 'packetloss_data'
+        db_table = 'packetlossdata'
 
     def __str__(self):
         return f"Потеря пакетов {self.packet_loss} {self.timestamp.strftime('%Y-%m-%d')}"
 
-# User
-# ├── user_name: String
-# ├── user_lastname: String
-# ├── user_surname: String
-# └── user_id: String
+# HostDevice 
+# ├── id: Integer (PK)
+# ├── typeNetDevicesHost: ForeignKey(TypeDevices)
+# ├── location: String
+# ├── IPAddressHost: ForeignKey(IPAddress)
+# ├── packetLossHost: ForeignKey(PacketLossData)
+# ├── mac_address: string
+# └── active: boolean
 
-class User(models.Model):
-    """Данные пользователей"""
-    user_surname = models.CharField(max_length=100, verbose_name='Фамилия')
-    user_name = models.CharField(max_length=100, verbose_name='Имя')
-    user_lastname = models.CharField(max_length=100, verbose_name='Отчество ')
-    user_id = models.CharField(max_length=100, verbose_name='ID пользователя')
-
+class HostDevice(models.Model):
+    """Хост-устройства"""
+    location = models.CharField(verbose_name='Местонахождение', max_length=150)
+    mac_address = models.CharField(verbose_name='Mac адрес', max_length=12)
+    active = models.BooleanField(default=False, verbose_name="Используется?")
+    
+    typeHosttDevices =  models.ForeignKey('TypeDevices', on_delete=models.CASCADE, null=True, verbose_name="Тип устройства")
+    # ipAddresshost =  models.ForeignKey('IPAddresss', on_delete=models.CASCADE, null=True, verbose_name="IP адрес")
+    # packetLossHost =  models.ForeignKey('PacketLossData', on_delete=models.CASCADE, null=True, verbose_name="Потеря пакетов")
+    # typeDevices = models.ForeignKey("TypeDevices", verbose_name="Устройство", on_delete=models.CASCADE)
+    
     class Meta:
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
-        db_table = 'user'
+        verbose_name = 'Хост-устройства'
+        verbose_name_plural = 'Хост-устройства'
+        db_table = 'hostdevice'
 
     def __str__(self):
-        return f"{self.user_surname} - {self.user_name} / {self.user_id}"
+        return f"{self.typeDevices.name} {self.typeDevices.typeDevice}"
 
 # UserActivity
+# ├── id: Integer (PK)
+# ├── name: String
 # ├── device: ForeignKey(NetworkDevice)
 # ├── username: ForeignKey(User)
 # ├── timestamp: DateTime
 # └── activity_type: String
 
 class UserActivity(models.Model):
+    """Активность пользователей"""
+    user_id = models.CharField(max_length=100, verbose_name='ID пользователя')
     timestamp = models.DateTimeField(verbose_name='Время')
     activity_type = models.CharField(max_length=100, verbose_name='Тип активности')
 
-    user_activity =  models.ForeignKey(User, on_delete=models.PROTECT, null=True, verbose_name="Пользователь")
-    device_userActivity = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name='Устройство')
+    username =  models.ForeignKey('User', on_delete=models.PROTECT, null=True, verbose_name="Пользователь")
+    device = models.ForeignKey("NetworkDevice", on_delete=models.CASCADE, verbose_name='Устройство')
+
+    class Meta:
+        verbose_name = 'Активность пользователя'
+        verbose_name_plural = 'Активности пользователей'
+        db_table = 'user_activity'
+
+    def __str__(self):
+        return f"{self.user_id} - {self.activity_type} - {self.timestamp}"
+
+# User
+# ├── id: Integer (PK)
+# ├── user_name: String
+# ├── timestamp: DateTime
+# └── activity_type: String
+
+class User(models.Model):
+    user_name = models.CharField(max_length=100, verbose_name='Имя')
+    user_lastname = models.CharField(max_length=100, verbose_name='Отчество ')
+    user_surname = models.CharField(max_length=100, verbose_name='Фамилия')
+    user_id = models.CharField(max_length=100, verbose_name='ID пользователя')
+    timestamp = models.DateTimeField(verbose_name='Время создания')
+
+    # user_activity = models.ForeignKey("UserActivity", on_delete=models.CASCADE, verbose_name='Пользователь')
+    # authenticationlog_user = models.ForeignKey(AuthenticationLog, on_delete=models.CASCADE, verbose_name='Журнал аутентификации')
+    
 
     class Meta:
         verbose_name = 'Пользователи'
@@ -359,19 +366,20 @@ class UserActivity(models.Model):
         return f"{self.user_surname} - {self.user_name} - {self.user_id}"
 
 # AuthenticationLog
+# ├── id: Integer (PK)
 # ├── user_id: ForeignKey(Users)
 # ├── device: ForeignKey(NetworkDevice)
 # ├── timestamp: DateTime
 # └── action_type: String
 
 class AuthenticationLog(models.Model):
-    """Журналы аутентификации"""
+    """Журнал аутентификации"""
     timestamp = models.DateTimeField(verbose_name='Время')
     action_type = models.CharField(max_length=100, verbose_name='Тип действия')
 
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
-    device = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name='Устройство')
-
+    user_id = models.ForeignKey("User", on_delete=models.CASCADE, verbose_name='Пользователь')
+    device = models.ForeignKey("NetworkDevice", on_delete=models.CASCADE, verbose_name='Устройство')
+    
     class Meta:
         verbose_name = 'Журнал аутентификации'
         verbose_name_plural = 'Журналы аутентификации'
@@ -445,5 +453,4 @@ class AuthenticationLog(models.Model):
 # Также может помочь использование Django shell (python manage.py shell) для выполнения запросов к базе данных и сериализации в интерактивном режиме. Это позволит вам экспериментировать с различными запросами и настройками сериализатора в более контролируемой среде.
 
 # Если проблема всё ещё не решена, предоставьте более подробную информацию о вашем сериализаторе NetworkDeviceSerializer и структуре связанных моделей. Это поможет дать более точные рекомендации.
-
 
