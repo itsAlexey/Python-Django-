@@ -4,34 +4,32 @@ from django.db import models
 
 # TypeDevices
 # ├── name: string
-# ├── typeDevice: string
+# ├── type_device: string
 # ├── serial_number: string
 # └── about: string
 
-class TypeDevices(models.Model):#Готово
+class TypeDevices(models.Model):
     """Тип устройства"""
     name = models.CharField(verbose_name='Название', max_length=150)
-    typeDevice = models.CharField(verbose_name="Тип устройства", max_length=50)
-    serialNumber = models.CharField(verbose_name="Серийный номер", max_length=50)
+    type_device = models.CharField(verbose_name="Тип устройства", max_length=50)
+    serial_number = models.CharField(verbose_name="Серийный номер", max_length=50)
     about = models.CharField(verbose_name="Об устройстве", max_length=200, blank=True)
 
     class Meta:
         verbose_name = 'Тип устройства'
         verbose_name_plural = 'Тип устройства'
-        db_table = 'typedevice'
+        db_table = 'type_device'
 
     def __str__(self):
-        return f"{self.name} / {self.typeDevice} /{self.serialNumber}"
+        return f"{self.name} / {self.type_device} /{self.serial_number}"
 
 # HostDevice 
-# ├── typeNetDevicesHost: ForeignKey(TypeDevices)
+# ├── typeHostDevices: ForeignKey(TypeDevices)
 # ├── location: String
-# ├── IPAddressHost: ForeignKey(IPAddress)
-# ├── packetLossHost: ForeignKey(PacketLossData)
 # ├── mac_address: string
 # └── active: boolean
 
-class HostDevice(models.Model):#Готово
+class HostDevice(models.Model):
     """Хост-устройства"""
     location = models.CharField(verbose_name='Местонахождение', max_length=150, blank=True)
     mac_address = models.CharField(verbose_name='Mac адрес', max_length=12)
@@ -42,29 +40,20 @@ class HostDevice(models.Model):#Готово
     class Meta:
         verbose_name = 'Хост-устройства'
         verbose_name_plural = 'Хост-устройства'
-        db_table = 'hostdevice'
+        db_table = 'host_device'
 
     def __str__(self):
-        return f"{self.typeHostDevices.typeDevice} / {self.typeHostDevices.name}"
+        return f"{self.typeHostDevices.type_device} / {self.typeHostDevices.name} / {self.mac_address}"
 
 # NetworkDevice
-# ├── id: Integer (PK)
-# ├── name: String
-# ├── device_type: String
+# ├── purpose: String
 # ├── location: String
-# ├── interfaceND: ForeignKey(Interface)
-# ├── typeNetDevicesND: ForeignKey(TypeDevices)
-# ├── networkDeviceTemperature: ForeignKey(NetworkDeviceTemperature)
-# ├── DeviceConfiguration: ForeignKey(DeviceConfiguration)
-# ├── PerformanceMetrics: ForeignKey(PerformanceMetrics)
-
-# ├── networkEventsInterface: ForeignKey(NetworkEvents)
-# └── ErrorLogND: ForeignKey(ErrorLog)
+# └── typeNetworkDevice: ForeignKey(TypeDevices)
 
 class NetworkDevice(models.Model):
-    """Сетевое устройство."""
-    device_usage = models.CharField(verbose_name='Назначение', max_length=150)
-    location = models.CharField(verbose_name='Местонахождение', max_length=150)
+    """Сетевое устройство"""
+    purpose = models.CharField(verbose_name='Назначение', max_length=150)
+    location = models.CharField(verbose_name='Местонахождение', max_length=150, blank=True)
 
     typeNetworkDevice =  models.ForeignKey(TypeDevices, on_delete=models.CASCADE, null=True, verbose_name="Тип устройства")
 
@@ -74,29 +63,23 @@ class NetworkDevice(models.Model):
         db_table = 'network_device'
 
     def __str__(self):
-        return f"{self.typeNetworkDevice.name}"
+        return f"{self.typeNetworkDevice.name} / {self.purpose}"
 
 # Interface
-# ├── id: Integer (PK)
-# ├── device: ForeignKey(NetworkDevice)
 # ├── name: String
 # ├── status: String
 # ├── speed: Integer (скорость интерфейса в Мбит/сек)
-# ├── trafficDataInterface: ForeignKey(TrafficData)
-# ├── trafficDataInterface: ForeignKey(BandwidthUsage)
-# └── duplex_mode: String (режим дуплекса - полный или половинный)
+# ├── duplex_mode: String (режим дуплекса - полный или половинный)
+# └── deviceInterface: ForeignKey(NetworkDevice)
 
 class Interface(models.Model):
-    """Интерфейс сетевого устройства."""
+    """Интерфейс сетевого устройства"""
     name = models.CharField(verbose_name='Название интерфейса', max_length=100)
     speed = models.FloatField(verbose_name="Скорость интерфейса в Мбит/сек")
     status = models.CharField(verbose_name='Статус', max_length=50)
     duplex_mode = models.TextField(verbose_name="Режим дуплекса - полный или половинный", max_length=50)
     
-    deviceInterface = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
-
-    # trafficDataInterface = models.ForeignKey('TrafficData', on_delete=models.PROTECT, null=True, verbose_name="Данные о трафике")
-    # bandwidthUsageInterface = models.ForeignKey('BandwidthUsage', on_delete=models.PROTECT, null=True, verbose_name="Использование полосы пропускания")
+    deviceInterface = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name="Сетевое устройство", blank=True)
 
     class Meta:
         verbose_name = 'Интерфейс'
@@ -104,15 +87,15 @@ class Interface(models.Model):
         db_table = 'interface'
 
     def __str__(self):
-        return f"{self.name} {self.deviceInterface.device_usage}"
+        return f"{self.name} {self.deviceInterface.purpose}"
 
 # TrafficData
-# ├── id: Integer (PK)
 # ├── timestamp: DateTime
 # ├── inbound_traffic: Float
 # ├── outbound_traffic: Float
-# ├── total_packets: Integer (общее количество пакетов)
-# └── error_packets: Integer (количество пакетов с ошибками)
+# ├── total_packets: Float (общее количество пакетов)
+# ├── error_packets: Float (количество пакетов с ошибками)
+# └── interfacesTrafficData: ForeignKey(Interface)
 
 class TrafficData(models.Model):
     """Данные о трафике"""
@@ -130,12 +113,12 @@ class TrafficData(models.Model):
         db_table = 'traffic_data'
 
     def __str__(self):
-        return f"{self.interfacesTrafficData.deviceInterface.typeNetworkDevice.name} - {self.inbound_traffic} / {self.outbound_traffic}"
+        return f"{self.interfacesTrafficData.deviceInterface.typeNetworkDevice.name} / {self.interfacesTrafficData.name} / {self.inbound_traffic} / {self.outbound_traffic}"
 
 # BandwidthUsage
-# ├── id: Integer (PK)
+# ├── bandwidth_usage: Float
 # ├── timestamp: DateTime
-# └── bandwidth_usage: Float
+# └── interfacesBandwidthUsage: ForeignKey(Interface)
 
 class BandwidthUsage(models.Model):
     """Использование полосы пропускания"""
@@ -150,21 +133,21 @@ class BandwidthUsage(models.Model):
         db_table = 'bandwidth_usage'
 
     def __str__(self):
-        return f"{self.interfacesBandwidthUsage.deviceInterface.typeNetworkDevice.name} - {self.bandwidth_usage}"
+        return f"{self.interfacesBandwidthUsage.deviceInterface.typeNetworkDevice.name} / {self.bandwidth_usage}"
 
 # NetworkEvents
-# ├── id: Integer (PK)
-# ├── event_timestamp: DateTime
+# ├── timestamp: DateTime
 # ├── event_type: String
-# └── severity_level: String
+# ├── severity_level: String
+# └── deviceNetworkEvents: ForeignKey(NetworkDevice)
 
 class NetworkEvents(models.Model):
     """Сетевые события"""
-    event_timestamp = models.DateTimeField(verbose_name='Время события')
+    timestamp = models.DateTimeField(verbose_name='Время события')
     event_type = models.CharField(max_length=100, verbose_name='Тип события')
     severity_level = models.CharField(max_length=100, verbose_name='Уровень серьезности')
 
-    deviceNetworkEvents = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
+    deviceNetworkEvents = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
 
     class Meta:
         verbose_name = 'Сетевое событие'
@@ -172,19 +155,19 @@ class NetworkEvents(models.Model):
         db_table = 'network_events'
 
     def __str__(self):
-        return f"{self.deviceNetworkEvents.typeNetworkDevice.name} - {self.event_type} - {self.event_timestamp}"
+        return f"{self.deviceNetworkEvents.typeNetworkDevice.name} / {self.event_type} / {self.severity_level}"
 
 # DeviceTemperature
-# ├── id: Integer (PK)
 # ├── timestamp: DateTime
-# └── temperature: Float (температура устройства)
+# ├── temperature: Float (температура устройства)
+# └── deviceDeviceTemperature: ForeignKey(NetworkDevice)
 
 class DeviceTemperature(models.Model):
-    """Температура устройства."""
+    """Температура устройства"""
     timestamp = models.DateTimeField(verbose_name='Время')
     temperature = models.FloatField(verbose_name='Температура устройства')
 
-    deviceDeviceTemperature = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
+    deviceDeviceTemperature = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
 
     class Meta:
         verbose_name = 'Температура устройства'
@@ -192,19 +175,19 @@ class DeviceTemperature(models.Model):
         db_table = 'device_temperature'
 
     def __str__(self):
-        return f"Температура {self.temperature} {self.timestamp.strftime('%Y-%m-%d')}"
+        return f"{self.deviceDeviceTemperature.typeNetworkDevice.name} / {self.temperature} / {self.timestamp.strftime('%Y-%m-%d')}"
 
 # PowerConsumption
-# ├── id: Integer (PK)
 # ├── timestamp: DateTime
-# └── power_consumption: Float (потребление энергии)
+# ├── power_consumption: Float (потребление энергии)
+# └── devicePowerConsumption: ForeignKey(NetworkDevice)
 
 class PowerConsumption(models.Model):
-    """Потребление энергии."""
+    """Потребление энергии"""
     timestamp = models.DateTimeField(verbose_name='Время')
     power_consumption = models.FloatField(verbose_name='Потребление энергии')
 
-    devicePowerConsumption = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
+    devicePowerConsumption = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
 
     class Meta:
         verbose_name = 'Потребление энергии'
@@ -212,19 +195,19 @@ class PowerConsumption(models.Model):
         db_table = 'рower_сonsumption'
 
     def __str__(self):
-        return f"Расход энергии {self.power_consumption} {self.timestamp.strftime('%Y-%m-%d')}"
+        return f"{self.devicePowerConsumption.typeNetworkDevice.name} / {self.power_consumption} / "
 
 # DeviceConfiguration
-# ├── id: Integer (PK)
-# ├── configuration_timestamp: DateTime
-# └── configuration_details: Text
+# ├── timestamp: DateTime
+# ├── configuration_details: Text
+# └── deviceDeviceConfiguration: ForeignKey(NetworkDevice)
 
 class DeviceConfiguration(models.Model):
     """Конфигурация устройств"""
-    configuration_timestamp = models.DateTimeField(verbose_name='Время конфигурации')
+    timestamp = models.DateTimeField(verbose_name='Время конфигурации')
     configuration_details = models.TextField(verbose_name='Детали конфигурации')
 
-    deviceDeviceConfiguration = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
+    deviceDeviceConfiguration = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
 
     class Meta:
         verbose_name = 'Конфигурация устройства'
@@ -232,14 +215,14 @@ class DeviceConfiguration(models.Model):
         db_table = 'device_configuration'
 
     def __str__(self):
-        return f"{self.deviceDeviceConfiguration.typeNetworkDevice.name} - {self.configuration_timestamp}"
+        return f"{self.deviceDeviceConfiguration.typeNetworkDevice.name} / {self.timestamp.strftime('%Y-%m-%d')}"
 
 # PerformanceMetrics
-# ├── id: Integer (PK)
 # ├── timestamp: DateTime
 # ├── cpu_usage: Float
 # ├── memory_usage: Float
-# └── storage_usage: Float (использование хранилища)
+# ├── storage_usage: Float (использование хранилища)
+# └── devicePerformanceMetrics: ForeignKey(NetworkDevice)
 
 class PerformanceMetrics(models.Model):
     """Метрики производительности"""
@@ -248,7 +231,7 @@ class PerformanceMetrics(models.Model):
     memory_usage = models.FloatField(verbose_name='Использование памяти')
     storage_ussage = models.FloatField(verbose_name="Использование хранилища")
 
-    devicePerformanceMetrics = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
+    devicePerformanceMetrics = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
 
     class Meta:
         verbose_name = 'Метрики производительности'
@@ -256,20 +239,21 @@ class PerformanceMetrics(models.Model):
         db_table = 'performance_metrics'
 
     def __str__(self):
-        return f"{self.devicePerformanceMetrics.typeNetworkDevice.name} - {self.cpu_usage}/ {self.memory_usage}/ {self.storage_ussage}"
+        return f"{self.devicePerformanceMetrics.typeNetworkDevice.name} / {self.cpu_usage} / {self.memory_usage} / {self.storage_ussage}"
 
 # IPAddress
-# ├── id: Integer (PK)
 # ├── ip_address: GenericIPAddressField
-# └── is_primary: BooleanField
+# ├── is_primary: BooleanField
+# ├── deviceIPAddress: ForeignKey(NetworkDevice)
+# └── hostdeviceIPAddress: ForeignKey(HostDevice)
 
 class IPAddress(models.Model):
-    """IP-адрес сетевого устройства."""
+    """IP-адрес сетевого устройства"""
     ip_address = models.GenericIPAddressField(verbose_name='IP-адрес')
     is_primary = models.BooleanField(default=False, verbose_name='Основной адрес?')
 
-    device_IPAddress = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
-    hostdevice_IPAddress = models.ForeignKey(HostDevice, blank=True, on_delete=models.CASCADE, verbose_name="Хост устройство")
+    deviceIPAddress = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
+    hostdeviceIPAddress = models.ForeignKey(HostDevice, blank=True, on_delete=models.CASCADE, verbose_name="Хост устройство")
 
     class Meta:
         verbose_name = 'IP-адрес'
@@ -280,18 +264,18 @@ class IPAddress(models.Model):
         return self.ip_address
 
 # PacketLossData
-# ├── hostaName_loss: ForeignKey(NetworkDevice)
 # ├── timestamp: DateTime
-# ├── packet_loss: ForeignKey(HostDevice)
-# └── packet_loss: Float (потеря пакетов)
+# ├── packet_loss: Float (потеря пакетов)
+# ├── devicePacketLossData: ForeignKey(NetworkDevice)
+# └── hostdevicePacketLossData: ForeignKey(HostDevice)
 
 class PacketLossData(models.Model):
-    """Данные о потере пакетов."""
+    """Данные о потере пакетов"""
     timestamp = models.DateTimeField(verbose_name='Время')
     packet_loss = models.FloatField(verbose_name='Потеря пакетов')
 
-    device_packetLossData = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
-    hostdevice_packetLossData = models.ForeignKey(HostDevice, blank=True, on_delete=models.CASCADE, verbose_name="Хост устройство")
+    devicePacketLossData = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
+    hostdevicePacketLossData = models.ForeignKey(HostDevice, blank=True, on_delete=models.CASCADE, verbose_name="Хост устройство")
 
     class Meta:
         verbose_name = 'Потеря пакетов'
@@ -299,7 +283,7 @@ class PacketLossData(models.Model):
         db_table = 'packetloss_data'
 
     def __str__(self):
-        return f"Потеря пакетов {self.packet_loss} {self.timestamp.strftime('%Y-%m-%d')}"
+        return f"{self.packet_loss} / {self.timestamp.strftime('%Y-%m-%d')}"
 
 # User
 # ├── user_name: String
@@ -320,42 +304,42 @@ class User(models.Model):
         db_table = 'user'
 
     def __str__(self):
-        return f"{self.user_surname} - {self.user_name} / {self.user_id}"
+        return f"{self.user_surname} {self.user_name} / {self.user_id}"
 
 # UserActivity
-# ├── device: ForeignKey(NetworkDevice)
-# ├── username: ForeignKey(User)
 # ├── timestamp: DateTime
-# └── activity_type: String
+# ├── activity_type: String
+# ├── userActivity: ForeignKey(User)
+# └── deviceUserActivity: ForeignKey(NetworkDevice)
 
-class UserActivity(models.Model):
+class UserActivity(models.Model):#Готово
     timestamp = models.DateTimeField(verbose_name='Время')
     activity_type = models.CharField(max_length=100, verbose_name='Тип активности')
 
-    user_activity =  models.ForeignKey(User, on_delete=models.PROTECT, null=True, verbose_name="Пользователь")
-    device_userActivity = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name='Устройство')
+    userActivity =  models.ForeignKey(User, on_delete=models.PROTECT, null=True, verbose_name="Пользователь")
+    deviceUserActivity = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name='Устройство')
 
     class Meta:
         verbose_name = 'Пользователи'
         verbose_name_plural = 'Пользователи'
-        db_table = 'useractivity'
+        db_table = 'user_activity'
 
     def __str__(self):
-        return f"{self.user_activity.user_surname} - {self.user_activity.user_name} - {self.user_activity.user_id} - {self.activity_type} - {self.device_userActivity.typeNetworkDevice.name}"
+        return f"{self.userActivity.user_surname} {self.userActivity.user_name} / {self.userActivity.user_id} / {self.activity_type} / {self.deviceUserActivity.typeNetworkDevice.name}"
 
 # AuthenticationLog
-# ├── user_id: ForeignKey(Users)
-# ├── device: ForeignKey(NetworkDevice)
 # ├── timestamp: DateTime
-# └── action_type: String
+# ├── action_type: String
+# ├── userId: ForeignKey(Users)
+# └── deviceAuthLog: ForeignKey(NetworkDevice)
 
 class AuthenticationLog(models.Model):
     """Журналы аутентификации"""
     timestamp = models.DateTimeField(verbose_name='Время')
     action_type = models.CharField(max_length=100, verbose_name='Тип действия')
 
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
-    device = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name='Устройство')
+    userId = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
+    deviceAuthLog = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, verbose_name='Устройство')
 
     class Meta:
         verbose_name = 'Журнал аутентификации'
@@ -363,7 +347,7 @@ class AuthenticationLog(models.Model):
         db_table = 'authentication_log'
 
     def __str__(self):
-        return f"{self.user_id.user_surname} {self.action_type} {self.timestamp}"
+        return f"{self.userId.user_surname} {self.userId.user_name} / {self.action_type} {self.timestamp.strftime('%Y-%m-%d')}"
 
 
 # Варианты построения графиков
