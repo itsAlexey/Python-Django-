@@ -312,7 +312,7 @@ class HostDevice(models.Model):
 
     def __str__(self):
         return f"{self.typeDevices.name} {self.typeDevices.typeDevice}"
-'''
+
 # UserActivity
 # ├── id: Integer (PK)
 # ├── name: String
@@ -385,7 +385,6 @@ class AuthenticationLog(models.Model):
     def __str__(self):
         return f"{self.user_id} {self.action_type} {self.timestamp}"
 
-'''
 
 # Варианты построения графиков
 # 1. "Динамика трафика (входящего/исходящего) по интерфейсам за выбранный период."

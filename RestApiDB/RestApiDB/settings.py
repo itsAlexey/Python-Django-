@@ -81,6 +81,14 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'RESTAPIDB',
+    #     'USER': 'postgres',
+    #     'PASSWORD': '12345678',
+    #     'HOST': 'localhost',
+    #     'PORT': '5432',
+    # }
 }
 
 
