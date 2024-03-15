@@ -16,19 +16,21 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from TestDB.views import NetworkDeviceListView
+from TestDB.views import NetworkDeviceListView, UsersListView
 
-from rest_framework.routers import DefaultRouter, SimpleRouter
+from rest_framework.routers import SimpleRouter
 
-from TestDB.views import NetworkDeviceView
+from TestDB.views import NetworkDeviceView, UsersView
 
 router = SimpleRouter()
 
 router.register('api/networkdevices', NetworkDeviceView)
+router.register('api/users', UsersView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('network-devices/', NetworkDeviceListView.as_view(), name='network-device-list'),
+    path('users/', UsersListView.as_view(), name='users-list'),
 ]
 
 urlpatterns += router.urls
