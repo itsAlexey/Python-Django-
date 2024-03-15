@@ -35,6 +35,7 @@ class HostDevice(models.Model):
     mac_address = models.CharField(verbose_name='Mac адрес', max_length=12)
     active = models.BooleanField(default=False, verbose_name="Используется?")
     
+    hostdeviceIPAddress = models.ForeignKey("IPAddress", blank=True, on_delete=models.CASCADE, verbose_name="Хост устройство")
     typeHostDevices =  models.ForeignKey(TypeDevices, on_delete=models.CASCADE, null=True, verbose_name="Тип устройства")
 
     class Meta:
@@ -56,7 +57,8 @@ class NetworkDevice(models.Model):
     location = models.CharField(verbose_name='Местонахождение', max_length=150, blank=True)
 
     typeNetworkDevice =  models.ForeignKey(TypeDevices, on_delete=models.CASCADE, null=True, verbose_name="Тип устройства")
-
+    deviceIPAddress = models.ForeignKey("IPAddress", blank=True, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
+    
     class Meta:
         verbose_name = 'Сетевое устройство'
         verbose_name_plural = 'Сетевые устройства'
@@ -102,8 +104,7 @@ class TrafficData(models.Model):
     timestamp = models.DateTimeField(verbose_name='Время')
     inbound_traffic = models.FloatField(verbose_name='Входящий трафик')
     outbound_traffic = models.FloatField(verbose_name='Исходящий трафик')
-    total_packets = models.FloatField(verbose_name="Общее количество пакетов")
-    error_packets = models.FloatField(verbose_name="Количество пакетов с ошибками")
+    time_start = models.DateTimeField(verbose_name='Время запуска')
 
     interfacesTrafficData = models.ForeignKey(Interface, on_delete=models.CASCADE, verbose_name="Интерфейсы")
 
@@ -252,9 +253,6 @@ class IPAddress(models.Model):
     ip_address = models.GenericIPAddressField(verbose_name='IP-адрес')
     is_primary = models.BooleanField(default=False, verbose_name='Основной адрес?')
 
-    deviceIPAddress = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
-    hostdeviceIPAddress = models.ForeignKey(HostDevice, blank=True, on_delete=models.CASCADE, verbose_name="Хост устройство")
-
     class Meta:
         verbose_name = 'IP-адрес'
         verbose_name_plural = 'IP-адреса'
@@ -275,7 +273,7 @@ class PacketLossData(models.Model):
     packet_loss = models.FloatField(verbose_name='Потеря пакетов')
 
     devicePacketLossData = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name="Сетевое устройство")
-    hostdevicePacketLossData = models.ForeignKey(HostDevice, blank=True, on_delete=models.CASCADE, verbose_name="Хост устройство")
+    hostdevicePacketLossData = models.ForeignKey(HostDevice, blank=True, on_delete=models.CASCADE, verbose_name="IP адрес")
 
     class Meta:
         verbose_name = 'Потеря пакетов'
@@ -283,7 +281,7 @@ class PacketLossData(models.Model):
         db_table = 'packetloss_data'
 
     def __str__(self):
-        return f"{self.packet_loss} / {self.timestamp.strftime('%Y-%m-%d')}"
+        return f"{self.packet_loss} % / {self.timestamp.strftime('%Y-%m-%d')}"
 
 # User
 # ├── user_name: String
@@ -295,7 +293,7 @@ class User(models.Model):
     """Данные пользователей"""
     user_surname = models.CharField(max_length=100, verbose_name='Фамилия')
     user_name = models.CharField(max_length=100, verbose_name='Имя')
-    user_lastname = models.CharField(max_length=100, verbose_name='Отчество ')
+    user_lastname = models.CharField(max_length=100, verbose_name='Отчество')
     user_id = models.CharField(max_length=100, verbose_name='ID пользователя')
 
     class Meta:
@@ -313,6 +311,7 @@ class User(models.Model):
 # └── deviceUserActivity: ForeignKey(NetworkDevice)
 
 class UserActivity(models.Model):#Готово
+    "Активность пользователей"
     timestamp = models.DateTimeField(verbose_name='Время')
     activity_type = models.CharField(max_length=100, verbose_name='Тип активности')
 
@@ -320,7 +319,7 @@ class UserActivity(models.Model):#Готово
     deviceUserActivity = models.ForeignKey(NetworkDevice, blank=True, on_delete=models.CASCADE, verbose_name='Устройство')
 
     class Meta:
-        verbose_name = 'Пользователи'
+        verbose_name = 'Активность пользователя'
         verbose_name_plural = 'Пользователи'
         db_table = 'user_activity'
 
