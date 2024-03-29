@@ -1,0 +1,166 @@
+app_start at 12-03-2024 15:45:58
+successful connect to database "127.0.0.1:8080" at 12-03-2024 15:46:00
+app_end at 12-03-2024 15:46:03
+app_start at 12-03-2024 16:03:26
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 12-03-2024 16:03:29
+app_end at 12-03-2024 16:03:35
+app_start at 12-03-2024 16:03:38
+app_end at 12-03-2024 16:03:40
+app_start at 12-03-2024 16:06:45
+app_end at 12-03-2024 16:06:50
+app_start at 12-03-2024 16:07:02
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 12-03-2024 16:07:04
+app_end at 12-03-2024 16:31:37
+app_start at 13-03-2024 08:57:34
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 13-03-2024 08:57:37
+user disconnect from database "http://127.0.0.1:8000/network-devices/" at 13-03-2024 09:07:44. The connection lasted = 0:10:07.801390
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 13-03-2024 09:07:45
+user disconnect from database "http://127.0.0.1:8000/network-devices/" at 13-03-2024 09:07:53. The connection lasted = 0:00:07.552751
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 13-03-2024 09:07:53
+user disconnect from database "http://127.0.0.1:8000/network-devices/" at 13-03-2024 09:07:54. The connection lasted = 0:00:00.225536
+GRAPH APPEARANCE  successful
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 13-03-2024 09:13:59
+user disconnect from database "http://127.0.0.1:8000/network-devices/" at 13-03-2024 09:14:03. The connection lasted = 0:00:03.318726
+GRAPH APPEARANCE  successful
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 13-03-2024 09:17:01
+GRAPH APPEARANCE  successful
+GRAPH APPEARANCE  successful
+GRAPH APPEARANCE  successful
+GRAPH APPEARANCE  successful
+user disconnect from database "http://127.0.0.1:8000/network-devices/" at 13-03-2024 09:32:22. The connection lasted = 0:15:20.912726
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 13-03-2024 09:32:23
+app_end at 13-03-2024 09:33:48
+app_start at 13-03-2024 09:33:51
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 13-03-2024 09:33:55
+GRAPH APPEARANCE {types} successful
+GRAPH APPEARANCE {types} successful
+app_end at 13-03-2024 09:34:12
+app_start at 13-03-2024 09:34:14
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 13-03-2024 09:34:16
+GRAPH APPEARANCE ['a', 'b', 'd'] successful
+GRAPH APPEARANCE ['a', 'c', 'd'] successful
+app_end at 13-03-2024 09:34:55
+app_start at 13-03-2024 09:34:58
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 13-03-2024 09:34:59
+GRAPH APPEARANCE c successful
+GRAPH APPEARANCE b successful
+app_end at 13-03-2024 09:37:06
+app_start at 13-03-2024 09:37:10
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 13-03-2024 09:37:12
+GRAPH APPEARANCE c successful
+GRAPH APPEARANCE b successful
+app_end at 13-03-2024 09:38:07
+app_start at 13-03-2024 09:38:10
+GRAPH APPEARANCE b successful
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 13-03-2024 09:38:15
+GRAPH APPEARANCE b successful
+GRAPH APPEARANCE c successful
+user disconnect from database "http://127.0.0.1:8000/network-devices/" at 13-03-2024 09:38:58. The connection lasted = 0:00:43.494576
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 13-03-2024 09:38:59
+app_end at 13-03-2024 09:39:00
+app_start at 13-03-2024 09:39:03
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 13-03-2024 09:39:04
+GRAPH APPEARANCE c successful
+GRAPH APPEARANCE b successful
+app_end at 13-03-2024 09:39:21
+app_start at 13-03-2024 15:55:57
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 13-03-2024 15:55:59
+app_start at 13-03-2024 16:07:23
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 13-03-2024 16:07:25
+GRAPH APPEARANCE c successful
+GRAPH APPEARANCE b successful
+app_end at 13-03-2024 16:20:15
+app_start at 15-03-2024 14:58:25
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 15-03-2024 14:58:26
+app_start at 19-03-2024 09:44:06
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 19-03-2024 09:44:16
+user disconnect from database "http://127.0.0.1:8000/network-devices/" at 19-03-2024 09:50:54. The connection lasted = 0:06:37.513531
+app_end at 19-03-2024 09:50:55
+app_start at 19-03-2024 09:50:58
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 19-03-2024 09:51:00
+app_end at 19-03-2024 09:51:01
+app_start at 19-03-2024 10:05:54
+app_end at 19-03-2024 10:05:59
+app_start at 19-03-2024 10:06:28
+app_end at 19-03-2024 10:06:31
+app_start at 19-03-2024 10:06:37
+app_end at 19-03-2024 10:06:40
+app_start at 19-03-2024 10:07:07
+app_end at 19-03-2024 10:07:09
+app_start at 19-03-2024 10:07:13
+app_end at 19-03-2024 10:07:17
+app_start at 19-03-2024 10:07:49
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 19-03-2024 10:07:50
+app_end at 19-03-2024 10:07:53
+app_start at 19-03-2024 10:12:18
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 19-03-2024 10:12:19
+app_end at 19-03-2024 10:12:21
+app_start at 19-03-2024 10:12:50
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 19-03-2024 10:12:51
+app_end at 19-03-2024 10:12:52
+app_start at 19-03-2024 10:13:14
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 19-03-2024 10:13:15
+app_end at 19-03-2024 10:13:16
+app_start at 19-03-2024 10:14:10
+app_end at 19-03-2024 10:14:15
+app_start at 19-03-2024 10:14:27
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 19-03-2024 10:14:29
+app_end at 19-03-2024 10:14:31
+app_start at 19-03-2024 10:15:44
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 19-03-2024 10:15:45
+app_end at 19-03-2024 10:15:46
+app_start at 19-03-2024 10:16:21
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 19-03-2024 10:16:22
+app_end at 19-03-2024 10:16:24
+app_start at 19-03-2024 10:16:41
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 19-03-2024 10:16:42
+app_end at 19-03-2024 10:16:43
+app_start at 19-03-2024 10:17:47
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 19-03-2024 10:17:48
+app_end at 19-03-2024 10:17:49
+app_start at 22-03-2024 09:21:34
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 22-03-2024 09:21:36
+user disconnect from database "http://127.0.0.1:8000/network-devices/" at 22-03-2024 09:22:10. The connection lasted = 0:00:33.999820
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 22-03-2024 09:22:11
+app_end at 22-03-2024 09:22:12
+app_start at 22-03-2024 09:22:15
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 22-03-2024 09:22:17
+app_end at 22-03-2024 09:22:25
+app_start at 22-03-2024 09:23:07
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 22-03-2024 09:23:09
+app_end at 22-03-2024 09:23:11
+app_start at 22-03-2024 09:23:22
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 22-03-2024 09:23:24
+app_start at 28-03-2024 14:03:28
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 28-03-2024 14:03:30
+app_end at 28-03-2024 14:04:11
+app_start at 28-03-2024 14:04:17
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 28-03-2024 14:04:19
+app_end at 28-03-2024 14:04:20
+app_start at 28-03-2024 14:06:05
+app_end at 28-03-2024 14:06:07
+app_start at 28-03-2024 14:06:29
+app_end at 28-03-2024 14:06:32
+app_start at 28-03-2024 14:09:16
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 28-03-2024 14:09:18
+app_end at 28-03-2024 14:09:19
+app_start at 28-03-2024 14:09:37
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 28-03-2024 14:09:38
+app_end at 28-03-2024 14:09:39
+app_start at 28-03-2024 14:09:51
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 28-03-2024 14:09:52
+app_end at 28-03-2024 14:09:53
+app_start at 28-03-2024 14:10:18
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 28-03-2024 14:10:19
+app_end at 28-03-2024 14:10:21
+app_start at 28-03-2024 14:11:59
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 28-03-2024 14:12:01
+app_end at 28-03-2024 14:12:02
+app_start at 28-03-2024 14:12:56
+app_start at 28-03-2024 14:13:26
+app_end at 28-03-2024 14:13:28
+app_start at 28-03-2024 14:13:52
+app_end at 28-03-2024 14:13:54
+app_start at 28-03-2024 14:14:41
+successful connect to database "http://127.0.0.1:8000/network-devices/" at 28-03-2024 14:14:42
+app_end at 28-03-2024 14:14:44

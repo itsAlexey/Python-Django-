@@ -102,23 +102,3 @@ class NetworkDeviceSerializer(ModelSerializer):
     class Meta:
         model = NetworkDevice
         fields = '__all__'
-
-# class NetworkDeviceSerializer(ModelSerializer):
-#     interfaces = InterfaceSerializer(many=True, read_only=True, source='interface_set')
-#     Network_Events = NetworkEventsSerializer(many=True, read_only=True, source='networkevents_set')
-#     Device_Temperature = DeviceTemperatureSerializer(many=True, read_only=True, source='devicetemperature_set')
-#     Power_Consumption = PowerConsumptionSerializer(many=True, read_only=True, source='powerconsumption_set')  # Исправил опечатку в 'powerconsumption_set'
-#     Device_Configuration = DeviceConfigurationSerializer(many=True, read_only=True, source='deviceconfiguration_set')
-#     Performance_Metrics = PerformanceMetricsSerializer(many=True, read_only=True, source='performancemetrics_set')
-#     # IPAddress_data = IPAddressSerializer(many=True, read_only=True, source='ip_address') # Убрано или закомментировано
-#     PacketLoss_Data = PacketLossDataSerializer(many=True, read_only=True, source='packetlossdata_set')
-    
-#     ip_addresses = SerializerMethodField()  # Новое поле для списка IP-адресов
-
-#     class Meta:
-#         model = NetworkDevice
-#         fields = '__all__'  # Исправлено на '__all__'
-
-#     def get_ip_addresses(self, obj):
-#         # Возвращает список IP-адресов как список строк
-#         return [ip.ip_address for ip in obj.ip_address.all()]
